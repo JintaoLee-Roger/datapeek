@@ -1,0 +1,122 @@
+{
+  "name": "datapeek",
+  "displayName": "DataPeek",
+  "description": "An extensible Python-powered scientific data viewer for VS Code.",
+  "version": "0.1.0",
+  "publisher": "datapeek-local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "main": "./dist/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "DataPeek executes Python and workspace renderer code."
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "datapeek.preview",
+        "title": "Preview with DataPeek",
+        "category": "DataPeek"
+      },
+      {
+        "command": "datapeek.selectPython",
+        "title": "Select Python Interpreter",
+        "category": "DataPeek"
+      },
+      {
+        "command": "datapeek.refreshRenderers",
+        "title": "Refresh Renderers",
+        "category": "DataPeek"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "datapeek.preview",
+          "when": "!explorerResourceIsFolder",
+          "group": "navigation@20"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "datapeek.preview",
+          "group": "navigation@20"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DataPeek",
+      "properties": {
+        "datapeek.pythonPath": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "Python executable path on the extension host. Supports ${workspaceFolder}. Empty: selected Python environment, .venv, then PATH."
+        },
+        "datapeek.backend": {
+          "type": "string",
+          "enum": [
+            "matplotlib",
+            "plotly"
+          ],
+          "default": "matplotlib",
+          "scope": "resource",
+          "description": "Backend for the built-in NumPy renderer."
+        },
+        "datapeek.rendererOptions": {
+          "type": "object",
+          "default": {},
+          "scope": "resource",
+          "description": "JSON options indexed by renderer ID."
+        },
+        "datapeek.renderTimeoutSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "maximum": 3600,
+          "scope": "resource"
+        },
+        "datapeek.discoveryTimeoutSeconds": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 300,
+          "scope": "resource"
+        },
+        "datapeek.maxArtifactMiB": {
+          "type": "number",
+          "default": 32,
+          "minimum": 1,
+          "maximum": 256,
+          "scope": "resource"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "python3 -m unittest discover -s tests -v",
+    "package": "npm run compile && vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "1.90.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.7.0"
+  }
+}

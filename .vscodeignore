@@ -1,0 +1,14 @@
+.vscode/**
+src/**
+tests/**
+node_modules/**
+.venv/**
+**/__pycache__/**
+**/*.pyc
+**/*.map
+*.vsix
+tsconfig.json
+package-lock.json
+examples/*.npy
+examples/*.csv
+examples/.vscode/**
