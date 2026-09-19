@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "name": "DAS and seismic data",
+      "path": "/home/jtli/data"
+    }
+  ],
+  "settings": {
+    "datapeek.pythonPath": "/home/jtli/envs/main/bin/python3",
+    "datapeek.backend": "matplotlib",
+    "datapeek.renderTimeoutSeconds": 120,
+    "datapeek.rendererOptions": {
+      "personal:geoscience.py:geoscience": {
+        "clip_percentile": 99,
+        "max_pixels": 512,
+        "max_read_mib": 256,
+        "large_volume_gb": 1.5
+      },
+      "builtin:npy": {
+        "cmap": "gray",
+        "max_pixels": 512,
+        "max_read_mib": 256,
+        "large_volume_gb": 1.5
+      }
+    }
+  }
+}

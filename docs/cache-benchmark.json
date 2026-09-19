@@ -1,0 +1,55 @@
+[
+  {
+    "case": "whale",
+    "cache": "miss",
+    "runner_seconds": 1.3441,
+    "log": [
+      "DataPeek cache MISS e08741eaf3efad8d6c1f37b7a12a375155b40fb1232412528affe0495859f365",
+      "DataPeek read DAS: 0.4470s; sampled=(453, 500); estimated read/decode=140.45 MiB; output=0.86 MiB"
+    ]
+  },
+  {
+    "case": "whale",
+    "cache": "hit",
+    "runner_seconds": 0.0788,
+    "log": [
+      "DataPeek cache HIT e08741eaf3efad8d6c1f37b7a12a375155b40fb1232412528affe0495859f365"
+    ]
+  },
+  {
+    "case": "baiyun",
+    "cache": "miss",
+    "runner_seconds": 1.2992,
+    "log": [
+      "DataPeek cache MISS 13f65b0208e1f0ed1ae1a4f99170dde9a66244695e69cbf8778ecf6fb9c5167d",
+      "DataPeek full slice iline: 0.0012s; shape=(1172, 512); output=2.29 MiB",
+      "DataPeek full slice xline: 0.0023s; shape=(512, 512); output=1.00 MiB",
+      "DataPeek full slice time: 0.0618s; shape=(512, 1172); output=2.29 MiB"
+    ]
+  },
+  {
+    "case": "baiyun",
+    "cache": "hit",
+    "runner_seconds": 0.0799,
+    "log": [
+      "DataPeek cache HIT 13f65b0208e1f0ed1ae1a4f99170dde9a66244695e69cbf8778ecf6fb9c5167d"
+    ]
+  },
+  {
+    "case": "fans",
+    "cache": "miss",
+    "runner_seconds": 1.0341,
+    "log": [
+      "DataPeek cache MISS 298109386d7d4a681509ca3d9b839566cf6432d73623968e81c85f2d159837bf",
+      "DataPeek full slice iline: 0.0404s; shape=(753, 501); output=1.44 MiB"
+    ]
+  },
+  {
+    "case": "fans",
+    "cache": "hit",
+    "runner_seconds": 0.0835,
+    "log": [
+      "DataPeek cache HIT 298109386d7d4a681509ca3d9b839566cf6432d73623968e81c85f2d159837bf"
+    ]
+  }
+]

@@ -1,0 +1,218 @@
+[
+  {
+    "case": "baiyun",
+    "codec": "raw",
+    "bytes": 662528,
+    "medianSeconds": 2.8020469471812248e-05
+  },
+  {
+    "case": "baiyun",
+    "codec": "deflate1",
+    "bytes": 390489,
+    "medianSeconds": 0.013073994079604745
+  },
+  {
+    "case": "baiyun",
+    "codec": "png1",
+    "bytes": 348471,
+    "medianSeconds": 0.025358560495078564
+  },
+  {
+    "case": "baiyun",
+    "codec": "png6",
+    "bytes": 304151,
+    "medianSeconds": 0.09225492703262717
+  },
+  {
+    "case": "channels",
+    "codec": "raw",
+    "bytes": 349553,
+    "medianSeconds": 9.202980436384678e-06
+  },
+  {
+    "case": "channels",
+    "codec": "deflate1",
+    "bytes": 327063,
+    "medianSeconds": 0.011418547481298447
+  },
+  {
+    "case": "channels",
+    "codec": "png1",
+    "bytes": 261602,
+    "medianSeconds": 0.01723924104589969
+  },
+  {
+    "case": "channels",
+    "codec": "png6",
+    "bytes": 245777,
+    "medianSeconds": 0.020356906112283468
+  },
+  {
+    "case": "fans",
+    "codec": "raw",
+    "bytes": 188877,
+    "medianSeconds": 4.772446118295193e-06
+  },
+  {
+    "case": "fans",
+    "codec": "deflate1",
+    "bytes": 150404,
+    "medianSeconds": 0.0052911811508238316
+  },
+  {
+    "case": "fans",
+    "codec": "png1",
+    "bytes": 121089,
+    "medianSeconds": 0.007101502967998385
+  },
+  {
+    "case": "fans",
+    "codec": "png6",
+    "bytes": 111132,
+    "medianSeconds": 0.014759626472368836
+  },
+  {
+    "case": "forge",
+    "codec": "raw",
+    "bytes": 255500,
+    "medianSeconds": 5.6674471125006676e-06
+  },
+  {
+    "case": "forge",
+    "codec": "deflate1",
+    "bytes": 232527,
+    "medianSeconds": 0.008751928457058966
+  },
+  {
+    "case": "forge",
+    "codec": "png1",
+    "bytes": 194585,
+    "medianSeconds": 0.011685025529004633
+  },
+  {
+    "case": "forge",
+    "codec": "png6",
+    "bytes": 186281,
+    "medianSeconds": 0.014688840019516647
+  },
+  {
+    "case": "marmousi",
+    "codec": "raw",
+    "bytes": 144400,
+    "medianSeconds": 3.4389086067676544e-06
+  },
+  {
+    "case": "marmousi",
+    "codec": "deflate1",
+    "bytes": 58887,
+    "medianSeconds": 0.002407167456112802
+  },
+  {
+    "case": "marmousi",
+    "codec": "png1",
+    "bytes": 47007,
+    "medianSeconds": 0.004244243027642369
+  },
+  {
+    "case": "marmousi",
+    "codec": "png6",
+    "bytes": 37695,
+    "medianSeconds": 0.011800979496911168
+  },
+  {
+    "case": "ridgecrest",
+    "codec": "raw",
+    "bytes": 171804,
+    "medianSeconds": 4.35288529843092e-06
+  },
+  {
+    "case": "ridgecrest",
+    "codec": "deflate1",
+    "bytes": 132887,
+    "medianSeconds": 0.004753542016260326
+  },
+  {
+    "case": "ridgecrest",
+    "codec": "png1",
+    "bytes": 141230,
+    "medianSeconds": 0.00785331055521965
+  },
+  {
+    "case": "ridgecrest",
+    "codec": "png6",
+    "bytes": 136591,
+    "medianSeconds": 0.009673786582425237
+  },
+  {
+    "case": "volume_zarr",
+    "codec": "raw",
+    "bytes": 786432,
+    "medianSeconds": 4.011252894997597e-05
+  },
+  {
+    "case": "volume_zarr",
+    "codec": "deflate1",
+    "bytes": 657147,
+    "medianSeconds": 0.02335574245080352
+  },
+  {
+    "case": "volume_zarr",
+    "codec": "png1",
+    "bytes": 534142,
+    "medianSeconds": 0.03319678141269833
+  },
+  {
+    "case": "volume_zarr",
+    "codec": "png6",
+    "bytes": 484699,
+    "medianSeconds": 0.06316184194292873
+  },
+  {
+    "case": "whale",
+    "codec": "raw",
+    "bytes": 226500,
+    "medianSeconds": 5.671987310051918e-06
+  },
+  {
+    "case": "whale",
+    "codec": "deflate1",
+    "bytes": 26009,
+    "medianSeconds": 0.0010716519318521023
+  },
+  {
+    "case": "whale",
+    "codec": "png1",
+    "bytes": 22663,
+    "medianSeconds": 0.0032070819288492203
+  },
+  {
+    "case": "whale",
+    "codec": "png6",
+    "bytes": 14940,
+    "medianSeconds": 0.007250454509630799
+  },
+  {
+    "case": "zhoushan",
+    "codec": "raw",
+    "bytes": 262144,
+    "medianSeconds": 6.479560397565365e-06
+  },
+  {
+    "case": "zhoushan",
+    "codec": "deflate1",
+    "bytes": 243850,
+    "medianSeconds": 0.008871653582900763
+  },
+  {
+    "case": "zhoushan",
+    "codec": "png1",
+    "bytes": 246389,
+    "medianSeconds": 0.013513116165995598
+  },
+  {
+    "case": "zhoushan",
+    "codec": "png6",
+    "bytes": 245765,
+    "medianSeconds": 0.014095772989094257
+  }
+]

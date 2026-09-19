@@ -1,26 +1,24 @@
-# 本地基础版验证记录
+# Validation coverage
 
-日期：2026-09-18。
+English | [简体中文](validation.zh-CN.md)
 
-环境：macOS arm64；VS Code 1.138.0；Node 25.2.1；Python 3.13.13；NumPy 2.4.4；matplotlib 3.10.9；Plotly 6.7.0。
+Recorded for version 0.0.1 on 2026-09-19. Test results describe the checked environments, not a guarantee for every platform or dependency combination.
 
-## 自动化
+| Scope | Evidence |
+| --- | --- |
+| Python | 57 tests passed: readers, slicing, colors, caching, Canvas output, and seismic/fault example |
+| TypeScript / Node | Compilation and 11 tests passed: associations and frontend color logic |
+| Quick Preview | Nine sample datasets rendered; browser pixel hashes matched Python output; 1D, single-point, NaN/Inf, and Petrel cases checked |
+| Detailed View | Fixed limits, slice selection, manual colors, zoom without reads, region reads, and overview restoration checked in Chromium |
+| Region reads | An 11×11 region loaded with one request, preserving axes and color limits |
+| 3D | Real Viser canvas/WebSocket loaded in generated embedded pages; mocked VS Code host verified browser actions and tab-close cleanup |
+| Worker lifecycle | Start, stop, restart, and port release after process exit checked |
+| Custom Figure example | NPZ/Zarr inputs generated seismic/fault overlays; numerical tests checked reflection, convolution alignment, and transparent masks |
 
-- TypeScript strict 编译通过。
-- Python unittest：9 项测试通过。覆盖 PNG line/image/bool、Plotly line/heatmap、离线脚本拆分与特殊字符标题、不支持数组、用户模块发现与失败回滚、日志隔离、缺失依赖、返回值校验、输出体积上限、协议版本和抽样边界。
-- 测试请求目录包含空格与中文；通过实际 Python 子进程执行 runner。
+## Compatibility limits
 
-## VS Code 实机
+Python 3.12 has been tested; the declared Python minimum is 3.10. Tests use installed scientific dependencies and a cigvis version supporting lazy slice providers.
 
-通过 `--extensionDevelopmentPath` 启动本仓库，以 `examples` 为 workspace：
+Complete Remote SSH desktop file-opening flows and final Webview port forwarding still need acceptance in a real VS Code window. Browser and mock-host tests do not establish those behaviors. Windows process cleanup and the minimum-version dependency matrix remain unverified.
 
-- Explorer 中出现 Preview with DataPeek。
-- 命令面板启动文件选择器并创建 DataPeek Webview。
-- 默认 Python 环境缺少 NumPy 时，UI 显示缺库诊断和实际解释器路径。
-- 为示例 workspace 显式选择已有科学计算环境后，`signal.npy` 的 matplotlib PNG 在 Webview 正常显示。
-- Python Plotly 离线输出在同一 Webview 正常显示。点击 Zoom in 后横轴范围和纵轴刻度改变，确认交互脚本执行正常。
-- 初始 Scattergl 在该 Webview 显示 WebGL 不支持；内置 renderer 已改用 SVG Scatter 并重新验证。
-
-## 未验证
-
-Remote SSH、Windows、Linux、Restricted Mode 的实机流程，以及完整生命周期/进程树的跨平台集成测试尚未完成。二维图与自定义 renderer 已通过 Python 子进程测试，尚未逐项进行 VS Code GUI 验收。自定义 Plotly renderer 使用 WebGL traces 时仍取决于 Webview 的 GPU 支持。
+See [development commands](implementation-plan.md) to run checks and [performance methodology](quick-preview-performance.md) for timing conditions. Re-run tests for code changes; documentation-only edits require link and content checks rather than repeating data benchmarks.

@@ -1,11 +1,13 @@
 import * as vscode from 'vscode';
+import { DetailView } from './details';
+import { AutoPreview, editorId } from './autoPreview';
 import { spawn } from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { randomUUID, randomBytes } from 'node:crypto';
 
-interface Renderer { id: string; name: string; extensions: string[]; source: string }
+interface Renderer { id: string; name: string; extensions: string[]; source: string; kind: 'figure' | 'array'; matches?: boolean }
 interface Artifact { kind: 'image' | 'html'; entry: string; mimeType: string; files: string[] }
 interface Response {
     protocolVersion: number; requestId: string; status: 'ok' | 'error';
@@ -16,8 +18,10 @@ interface Response {
 interface View {
     panel: vscode.WebviewPanel; uri: vscode.Uri; abort?: AbortController; generation: number;
     disposed: boolean; currentDirectory?: string; hasResult: boolean;
+    detail?: DetailView; executable?: string; renderer?: Renderer; options?: Record<string,unknown>;
 }
 let output: vscode.OutputChannel;
+let autoPreview: AutoPreview | undefined;
 const views = new Map<string, View>();
 const running = new Set<AbortController>();
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
@@ -130,7 +134,7 @@ async function operation(context: vscode.ExtensionContext, executable: string, u
     try {
         const requestId = randomUUID();
         const maxBytes = seconds(uri, 'maxArtifactMiB', 32, 256) * 1048576;
-        const request = { protocolVersion: 1, requestId, operation: operationName, workspaceRoot: folder?.uri.fsPath ?? null, targetPath: uri.fsPath, limits: { maxArtifactBytes: maxBytes }, ...extra };
+        const request = { protocolVersion: 1, requestId, operation: operationName, workspaceRoot: folder?.uri.fsPath ?? null, targetPath: uri.fsPath, readerPaths: config(uri).get('readerPaths',['~/.datapeek/readers']), cache: { enabled: config(uri).get('cache.enabled', true), directory: path.join(context.globalStorageUri.fsPath, 'preview-cache'), maxEntries: seconds(uri, 'cache.maxEntries', 100, 10000), maxMiB: seconds(uri, 'cache.maxMiB', 512, 16384), maxAgeDays: seconds(uri, 'cache.maxAgeDays', 7, 365) }, limits: { maxArtifactBytes: maxBytes }, ...extra };
         const requestFile = path.join(directory, 'request.json');
         await fs.writeFile(requestFile, JSON.stringify(request), { mode: 0o600 });
         const timeout = operationName === 'discover' ? seconds(uri, 'discoveryTimeoutSeconds', 15, 300) : seconds(uri, 'renderTimeoutSeconds', 60, 3600);
@@ -171,12 +175,14 @@ function messagePage(message: string): string {
     return `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><style>body{font-family:system-ui;padding:28px;line-height:1.6}pre{white-space:pre-wrap}</style></head><body><h2>DataPeek</h2><pre>${escapeHtml(message)}</pre></body></html>`;
 }
 async function showArtifact(view: View, artifact: Artifact, directory: string, uri: vscode.Uri, subtitle: string, signal: AbortSignal) {
+    output?.appendLine(subtitle);
     const webview = view.panel.webview;
     const nonce = randomBytes(18).toString('hex');
+    const toolbar=`${view.renderer?.kind==='array'?'<button id="detail">Detailed View</button>':''}<button id="choose">Choose Reader</button><script nonce="${nonce}">(()=>{const api=acquireVsCodeApi();document.getElementById('detail')?.addEventListener('click',()=>api.postMessage({action:'detail'}));document.getElementById('choose').onclick=()=>api.postMessage({action:'chooseReader'});})();</script>`;
     let html: string;
     if (artifact.kind === 'image') {
         const imageUri = webview.asWebviewUri(hostUri(path.join(directory, artifact.entry), uri));
-        html = `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src 'unsafe-inline'"><style>body{font-family:system-ui;padding:16px}p{opacity:.7;font-size:12px;overflow-wrap:anywhere}img{max-width:100%;height:auto;background:white}</style></head><body><p>${escapeHtml(subtitle)}</p><img alt="Scientific data preview" src="${imageUri}"></body></html>`;
+        html = `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'"><style>body{font-family:system-ui;padding:16px}p{opacity:.7;font-size:12px;overflow-wrap:anywhere}img{max-width:100%;height:auto;background:white}</style></head><body>${toolbar}<img alt="Scientific data preview" src="${imageUri}"></body></html>`;
     } else {
         html = await fs.readFile(path.join(directory, artifact.entry), 'utf8');
         for (const file of artifact.files) {
@@ -184,42 +190,59 @@ async function showArtifact(view: View, artifact: Artifact, directory: string, u
         }
         const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src ${webview.cspSource} data: blob:; font-src ${webview.cspSource} data:; worker-src blob:; connect-src 'none';">`;
         if (!html.includes('__DATA_CSP__')) { throw new Error('PROTOCOL_ERROR: missing HTML security template'); }
-        html = html.replace('__DATA_CSP__', csp).replaceAll('__DATA_NONCE__', nonce);
+        html = html.replace('__DATA_CSP__', csp).replaceAll('__DATA_NONCE__', nonce).replace('<body>',`<body>${toolbar}`);
     }
     if (signal.aborted || view.disposed) { throw new Error('CANCELLED'); }
-    webview.options = { enableScripts: artifact.kind === 'html', localResourceRoots: [hostUri(path.join(directory, 'artifacts'), uri)] };
+    webview.options = { enableScripts: true, localResourceRoots: [hostUri(path.join(directory, 'artifacts'), uri)] };
     webview.html = html;
     view.hasResult = true;
 }
 
-async function preview(context: vscode.ExtensionContext, resource?: vscode.Uri) {
+async function preview(context: vscode.ExtensionContext, resource?: vscode.Uri, suppliedPanel?: vscode.WebviewPanel, chooseReader = false) {
     checkTrust();
     let uri = resource ?? [...views.values()].find(view => view.panel.active)?.uri ?? vscode.window.activeTextEditor?.document.uri;
-    if (!uri) { uri = (await vscode.window.showOpenDialog({ canSelectMany: false, canSelectFolders: false, title: 'Preview with DataPeek' }))?.[0]; }
+    if (!uri) { uri = (await vscode.window.showOpenDialog({ canSelectMany: false, canSelectFolders: true, title: 'Preview with DataPeek' }))?.[0]; }
     if (!uri) { return; }
     checkFileUri(uri);
-    if (!(await fs.stat(uri.fsPath)).isFile()) { throw new Error('Select a file to preview.'); }
+    const targetStat = await fs.stat(uri.fsPath);
+    if (config(uri).get<string[]>('previewExcludedPaths',[]).includes(uri.fsPath)) {
+        throw new Error('This container is excluded from preview. Expand it and select a member.');
+    }
+    if (!targetStat.isFile() && !targetStat.isDirectory()) { throw new Error('Select a file or data directory.'); }
     const key = uri.toString();
     let view = views.get(key);
+    if (suppliedPanel && view && view.panel !== suppliedPanel) { view.panel.dispose(); view=undefined; }
     if (!view) {
-        const panel = vscode.window.createWebviewPanel('datapeek', `DataPeek: ${path.basename(uri.fsPath)}`, vscode.ViewColumn.Beside, { enableScripts: false, localResourceRoots: [] });
+        const panel = suppliedPanel ?? vscode.window.createWebviewPanel('datapeek', `DataPeek: ${path.basename(uri.fsPath)}`, vscode.ViewColumn.Active, { enableScripts: false, localResourceRoots: [], retainContextWhenHidden: true });
         view = { panel, uri, disposed: false, generation: 0, hasResult: false };
         views.set(key, view);
         const created = view;
-        panel.onDidDispose(() => { created.disposed = true; created.abort?.abort(); views.delete(key); void remove(created.currentDirectory); });
-    } else { view.panel.reveal(); view.abort?.abort(); }
+        panel.webview.onDidReceiveMessage(message => {
+            if(message?.action==='chooseReader'){void preview(context,uri,undefined,true).catch(error=>output.appendLine(String(error)));return;}
+            if (message?.action !== 'detail' || created.detail || !created.executable || created.renderer?.kind !== 'array') { return; }
+            created.abort?.abort();
+            const detail = new DetailView(context,panel,uri!,output,() => { void preview(context,uri).catch(error=>output.appendLine(String(error))); });
+            created.detail=detail;
+            void detail.open(created.executable,created.options??{},false,{id:created.renderer!.id,name:created.renderer!.name,source:created.renderer!.source,workspaceRoot:vscode.workspace.getWorkspaceFolder(uri!)?.uri.fsPath,readerPaths:config(uri!).get('readerPaths',['~/.datapeek/readers'])}).catch(error => {
+                if(created.disposed || created.detail!==detail) { return; }
+                detail.dispose();created.detail=undefined;
+                output.appendLine(String(error));void vscode.window.showErrorMessage(`DataPeek: ${error.message}`);
+            });
+        });
+        panel.onDidDispose(() => { created.disposed = true; created.abort?.abort(); created.detail?.dispose(); if (views.get(key)===created) { views.delete(key); } void remove(created.currentDirectory); });
+    } else { view.panel.reveal(vscode.ViewColumn.Active); view.abort?.abort(); }
     const state = view;
     const generation = ++state.generation;
     const controller = new AbortController();
     state.abort = controller;
     running.add(controller);
-    if (!state.hasResult) { state.panel.webview.html = messagePage('Selecting Python and discovering renderers…'); }
+    if (!state.hasResult) { state.panel.webview.html = messagePage('Opening…'); }
     await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'DataPeek', cancellable: true }, async (progress, token) => {
         const cancellation = token.onCancellationRequested(() => controller.abort());
         let renderedDirectory: string | undefined;
         try {
             const executable = await resolvePython(uri!, controller.signal);
-            progress.report({ message: 'Discovering Python renderers…' });
+            progress.report({ message: 'Opening…' });
             const discovery = await operation(context, executable, uri!, controller.signal, 'discover');
             const all = discovery.response.renderers!;
             for (const diagnostic of discovery.response.diagnostics ?? []) {
@@ -227,24 +250,36 @@ async function preview(context: vscode.ExtensionContext, resource?: vscode.Uri) 
             }
             if (discovery.response.diagnostics?.length) { void vscode.window.showWarningMessage('Some DataPeek renderers could not be loaded. See the DataPeek output channel.'); }
             await remove(discovery.directory);
-            const name = path.basename(uri!.fsPath).toLowerCase();
-            const candidates = all.filter(r => r.extensions.some(ext => name.endsWith(ext.toLowerCase())));
-            let renderer: Renderer | undefined;
-            if (candidates.length === 1) { renderer = candidates[0]; }
-            else {
-                const choices = candidates.length ? candidates : all;
-                const choice = await vscode.window.showQuickPick(choices.map(r => ({ label: r.name, description: r.id, renderer: r })), { title: candidates.length ? 'Select a DataPeek renderer' : 'No matching suffix — select a renderer', placeHolder: 'Custom renderers belong in .datapeek/*.py' }, token);
-                renderer = choice?.renderer;
+            const candidates = all.filter(r => r.matches);
+            const remembered = context.workspaceState.get<string>('reader.'+key);
+            let renderer: Renderer | undefined = !chooseReader ? all.find(r=>r.id===remembered) : undefined;
+            const custom = candidates.filter(r=>r.source!=='builtin');
+            if(!renderer && !chooseReader && custom.length===1)renderer=custom[0];
+            if(!renderer && !chooseReader && candidates.length===1)renderer=candidates[0];
+            if(!renderer){
+                const choices = chooseReader || !candidates.length ? all : candidates;
+                const items: (vscode.QuickPickItem & {renderer?:Renderer})[]=[];
+                for(const [scope,label] of [['builtin','Built-in'],['personal','Custom · Personal'],['workspace','Custom · Workspace']]){
+                    const group=choices.filter(r=>r.source.split(':')[0]===scope);
+                    if(!group.length)continue;
+                    items.push({label,kind:vscode.QuickPickItemKind.Separator});
+                    for(const r of group)items.push({label:r.name,description:r.id,detail:r.kind==='array'?'Array reader · supports Detailed View':'Custom Figure',renderer:r});
+                }
+                const choice = await vscode.window.showQuickPick(items, {title:'Choose a reader (remembered after opening)',placeHolder:'Built-in formats or personal/workspace scripts'}, token);
+                renderer=choice?.renderer;
             }
             if (!renderer || controller.signal.aborted || state.disposed) { throw new Error('CANCELLED'); }
-            progress.report({ message: `Rendering with ${renderer.name}…` });
+            progress.report({ message: `Loading…` });
             const rendererOptions = config(uri!).get<Record<string, unknown>>('rendererOptions', {})[renderer.id] ?? {};
             if (!object(rendererOptions)) { throw new Error('rendererOptions entry must be a JSON object'); }
-            const options = { ...(renderer.id === 'builtin:npy' ? { backend: config(uri!).get('backend', 'matplotlib') } : {}), ...rendererOptions };
+            const options = { ...rendererOptions, ...(renderer.kind === 'array' ? { backend: 'canvas' } : {}) };
             const rendered = await operation(context, executable, uri!, controller.signal, 'render', { rendererId: renderer.id, options });
             renderedDirectory = rendered.directory;
             if (controller.signal.aborted || state.disposed) { throw new Error('CANCELLED'); }
-            await showArtifact(state, rendered.response.artifact!, rendered.directory, uri!, `${renderer.name} · ${executable} · ${vscode.env.remoteName ?? 'local'}`, controller.signal);
+            state.detail?.dispose();state.detail=undefined;
+            state.executable=executable;state.renderer=renderer;state.options=options;
+            await showArtifact(state, rendered.response.artifact!, rendered.directory, uri!, `${renderer.source==='builtin'?'Built-in':'Custom'} · ${renderer.name} · ${renderer.source} · ${executable} · ${vscode.env.remoteName ?? 'local'}`, controller.signal);
+            await context.workspaceState.update('reader.'+key,renderer.id);
             const previous = state.currentDirectory;
             state.currentDirectory = rendered.directory;
             renderedDirectory = undefined;
@@ -263,8 +298,28 @@ async function preview(context: vscode.ExtensionContext, resource?: vscode.Uri) 
 export function activate(context: vscode.ExtensionContext) {
     output = vscode.window.createOutputChannel('DataPeek');
     context.subscriptions.push(output);
+    const updateExclusions=()=>vscode.commands.executeCommand('setContext','datapeek.excludedPaths',vscode.workspace.getConfiguration('datapeek').get('previewExcludedPaths',[]));
+    void updateExclusions();
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event=>{if(event.affectsConfiguration('datapeek.previewExcludedPaths'))void updateExclusions();}));
+    autoPreview = new AutoPreview(context);
+    void autoPreview.ready.catch(error=>output.appendLine(`Auto preview restore: ${error}`));
+    context.subscriptions.push(vscode.commands.registerCommand('datapeek.toggleAutoPreview', async () => {
+        try { checkTrust(); await autoPreview!.toggle(); } catch(error) { void vscode.window.showErrorMessage(String(error)); }
+    }));
+    context.subscriptions.push(vscode.window.registerCustomEditorProvider(editorId,{
+        openCustomDocument: async (uri: vscode.Uri) => ({uri,dispose(){}}),
+        resolveCustomEditor: async (document: vscode.CustomDocument,panel: vscode.WebviewPanel) => {
+            try { await preview(context,document.uri,panel); }
+            catch(error) { panel.webview.html=messagePage(String(error)); }
+        },
+    },{supportsMultipleEditorsPerDocument:false,webviewOptions:{retainContextWhenHidden:true}}));
     const guarded = (fn: (...args: any[]) => Promise<unknown>) => (...args: any[]) => fn(...args).catch(error => { output.appendLine(String(error)); void vscode.window.showErrorMessage(`DataPeek: ${error.message ?? error}`); });
     context.subscriptions.push(vscode.commands.registerCommand('datapeek.preview', guarded((uri?: vscode.Uri) => preview(context, uri))));
+    context.subscriptions.push(vscode.commands.registerCommand('datapeek.chooseReader', guarded((uri?: vscode.Uri)=>preview(context,uri,undefined,true))));
+    context.subscriptions.push(vscode.commands.registerCommand('datapeek.clearCache', guarded(async () => {
+        await remove(path.join(context.globalStorageUri.fsPath, 'preview-cache'));
+        void vscode.window.showInformationMessage('DataPeek preview cache cleared.');
+    })));
     context.subscriptions.push(vscode.commands.registerCommand('datapeek.selectPython', guarded(async () => {
         checkTrust();
         const folders = vscode.workspace.workspaceFolders ?? [];
@@ -284,7 +339,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export async function deactivate() {
+    await autoPreview?.restore().catch(error=>output.appendLine(String(error)));
     for (const controller of running) { controller.abort(); }
-    await Promise.all([...views.values()].map(view => { view.disposed = true; view.panel.dispose(); return remove(view.currentDirectory); }));
+    await Promise.all([...views.values()].map(view => { view.disposed = true; view.detail?.dispose(); view.panel.dispose(); return remove(view.currentDirectory); }));
     views.clear();
 }

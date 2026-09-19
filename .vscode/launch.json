@@ -1,9 +1,30 @@
 {
   "version": "0.2.0",
-  "configurations": [{
-    "name": "Run DataPeek", "type": "extensionHost", "request": "launch",
-    "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-    "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-    "preLaunchTask": "npm: compile"
-  }]
+  "configurations": [
+    {
+      "name": "Run DataPeek",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Run DataPeek \u2014 real data",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "${workspaceFolder}/examples/real-data.code-workspace"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile"
+    }
+  ]
 }

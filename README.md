@@ -1,132 +1,80 @@
 # DataPeek
 
-An extensible Python-powered scientific data viewer for VS Code.
+English | [简体中文](README.zh-CN.md)
 
-本地可用的 v0.1 基础版本。TypeScript 负责 VS Code UI 与执行编排，Python 负责数据读取、抽样和科学绘图。
+A lightweight scientific data preview extension for VS Code. Open a quick overview, inspect a slice when needed, and add Python readers for your own formats.
 
-## 安装与使用
+## Get started
 
-1. 在 VS Code 运行 **Extensions: Install from VSIX...**，选择本项目生成的 `datapeek-0.1.0.vsix`。
-2. 在要使用的 Python 环境安装依赖（Python 3.10+）：
+1. Install the DataPeek `.vsix` using **Extensions: Install from VSIX...**.
+2. Install `numpy` and `matplotlib` in a Python 3.10+ environment. Add `h5py` for HDF5 or `zarr` for Zarr files. Detailed View requires `plotly`; 3D and the Petrel palette require `cigvis` and its viewer dependencies.
+3. Run **DataPeek: Select Python Interpreter**.
+4. Right-click a file or supported data directory and select **Preview with DataPeek**.
 
-   ```sh
-   python -m pip install numpy matplotlib plotly
-   ```
+With Remote SSH, install Python dependencies and reader scripts on the remote host. Previews open in the active editor group. After updating the extension, run **Developer: Reload Window** and reopen existing previews.
 
-   只用静态图可不安装 Plotly。
+## Supported data
 
-3. 打开数据所在项目。运行 **DataPeek: Select Python Interpreter** 选择这个环境的 Python executable，或在 workspace settings 中设置：
+| Reader | Use |
+| --- | --- |
+| Built-in | Generic 1D, 2D, and 3D arrays in NPY, NPZ, HDF5, and Zarr |
+| Custom array reader | Your dataset names, axis conventions, or file formats; uses the shared preview and inspection controls |
+| Custom Figure renderer | Your own Matplotlib or Python Plotly visualization, including overlays |
 
-   ```json
-   {
-     "datapeek.pythonPath": "/absolute/path/to/python"
-   }
-   ```
+If a container holds multiple arrays, select one through its `dataset` option. Volumes use `(iline, xline, time)` order. Built-in readers display values as stored; preprocessing belongs in custom scripts.
 
-4. 在 Explorer 中右键数据文件 → **Preview with DataPeek**。
+Use **Choose Reader** to switch handlers. DataPeek remembers a successful choice for each file. See [custom readers and options](docs/custom-readers.md) and [DAS/seismic examples](docs/real-data-debug.md).
 
-未显式配置时依次使用 Microsoft Python 扩展选中的环境、项目 `.venv`、PATH 中的 Python。不会自动安装依赖，也不会自动激活 conda shell；依赖额外环境变量的环境需自行准备。
+## Inspect data
 
-## 当前功能
+Quick Preview shows a static overview. For array readers, **Detailed View** opens Plotly in the same tab.
 
-- `.npy` 一维实数数组 → matplotlib line；二维数组 → image + colorbar。
-- 设置 `"datapeek.backend": "plotly"` 后重新预览，使用 Python Plotly 交互图，支持浏览器端缩放和平移。
-- 自动发现当前 workspace folder 下 `.datapeek/*.py` 的自定义 renderer。
-- 输出支持 matplotlib Figure 和 Python Plotly Figure；无需写 JavaScript renderer。
-- 每次预览重新发现 Python 模块，保存自定义 renderer 后再次预览即可。
-- 多个匹配 renderer 时弹出选择器；未知后缀可手动选择已注册 renderer。
-- 错误、缺库和 Python traceback 显示在 DataPeek Output Channel。
-- 超时、取消、关闭预览终止子进程；结果大小默认限制为 32 MiB。
+| Control | Action |
+| --- | --- |
+| Axis and Slice | Select a volume section; the slider reads on release |
+| Zoom and pan | Explore the loaded image without reading more data |
+| Read Visible Region | Load more detail within the visible area |
+| Full View | Return to the loaded overview |
+| vmin/vmax, Colormap, Apply | Adjust display colors without rereading data |
+| Reset Defaults | Restore the reader's configured display defaults |
 
-大数组在 Python 中 mmap 并抽样：1D 上限 20,000 点，静态 2D 每轴最多 1,024 点，交互 2D 每轴最多 512 点。预览标题注明抽样；可能漏掉窄脉冲，不应作为精确分析结果。object、complex、字符串、空数组及 3D+ 暂不支持。
+Color limits remain fixed after initialization until you change or reset them. Zoom alone does not increase data resolution. Available palettes include `gray`, `seismic`, `RdBu_r`, `viridis`, and `Petrel`.
 
-## 自定义 renderer
+For volume readers, **3D View** opens cigvis in a separate tab; **Open in Browser** opens it externally. Use **Stop 3D** before rebuilding with new slice settings. Closing the 3D tab stops its service; closing only an external browser tab does not.
 
-在**当前打开的项目根目录**创建 `.datapeek/text_signal.py`：
+## Single-click previews
 
-```python
-from datapeek import viewer
+Run **DataPeek: Toggle Automatic Preview** to temporarily open matching files directly in DataPeek. Run it again to disable; reloading also restores the previous file associations. Close and reopen any already-open text tabs after enabling it.
 
-@viewer.register(name="Text signal", extensions=[".txt"])
-def render(path, options):
-    import numpy as np
-    from matplotlib.figure import Figure
+Default patterns cover NPY, NPZ, H5, and HDF5. Add other file patterns with `datapeek.autoPreviewPatterns`. Directories still expand normally; use their context menu to preview them. `datapeek.previewExcludedPaths` can hide container paths from that menu.
 
-    data = np.loadtxt(path)
-    fig = Figure(figsize=(10, 5), layout="constrained")
-    fig.subplots().plot(data[:20000])
-    return fig
-```
+## Large files and caching
 
-`path` 是 `pathlib.Path`，`options` 是普通字典。`datapeek` SDK 随扩展加载，无需 pip 安装；renderer 的其他依赖必须在选定 Python 环境中可用。SDK 只在 DataPeek runner 内自动可用。
+Previews limit display resolution. For volumes up to 1.5 GB of uncompressed data, the default is three middle slices; larger volumes default to iline only. Each selected slice is read in full. Use the `slices` option to override the selection.
 
-返回 Python Plotly 图也可以：
+Compressed formats may need to decode more data than the displayed region. Generic NPZ readers decompress an entire selected array; NPY/Zarr are preferable for large data requiring partial reads.
+
+The preview cache defaults to 100 entries, 512 MiB, and 7 days without access. Configure `datapeek.cache.*`, or run **DataPeek: Clear Preview Cache**. Custom array readers can opt in to caching; Figure renderers are not cached.
+
+## Add a custom viewer
+
+Place a Python script in `.datapeek/` at the workspace root, or `~/.datapeek/readers/` for reuse across projects. The extension supplies the `datapeek` SDK.
 
 ```python
 from datapeek import viewer
 
-@viewer.register(name="Interactive signal", extensions=[".txt"])
-def render(path, options):
+@viewer.reader(name="Text array", extensions=[".txt"])
+def read(path, options):
     import numpy as np
-    import plotly.graph_objects as go
-    return go.Figure(go.Scatter(y=np.loadtxt(path)[:20000], mode="lines"))
+    return np.loadtxt(path)
 ```
 
-通过设置向 renderer 传参：
+For an overlay example, [seismic_fault_demo.py](examples/seismic_fault_demo.py) generates seismic traces from impedance and overlays faults. Installation, assumptions, and parameters are documented in the script and the [examples guide](docs/real-data-debug.md#synthetic-seismic-with-fault-overlay).
 
-```json
-{
-  "datapeek.rendererOptions": {
-    "workspace:text_signal.py:render": { "gain": 2 },
-    "builtin:npy": { "cmap": "seismic", "title": "Experiment A" }
-  }
-}
-```
+## Help and development
 
-用户函数自行读取 `options`。ID 为 `workspace:<文件名>:<函数名>`，可用装饰器的 `id=` 指定稳定的局部 ID。以下划线开头的辅助模块不作为 renderer 扫描。模块导入会执行 Python 代码，因此 Restricted Mode 下禁用扩展。
+Errors and diagnostics appear in **Output → DataPeek**. Check the selected Python environment if a dependency is missing. Reader scripts execute Python code and require a trusted workspace.
 
-## 本地开发
-
-```sh
-npm ci
-npm run compile
-python3 -m pip install -r python/requirements.txt
-python3 examples/create_samples.py
-```
-
-在 VS Code 打开仓库并按 F5，启动 **Run DataPeek**。在扩展开发宿主打开 `examples` 文件夹，右键 `signal.npy`、`matrix.npy` 或 `custom_signal.csv` 预览。自定义示例只在 `examples` 作为 workspace root 时被发现。
-
-```sh
-npm test          # 需要当前 python3 环境具备科学库
-npm run package  # 生成 datapeek-0.1.0.vsix
-```
-
-## Remote SSH 源码调试
-
-可以把源码推到 GitHub 后，在远端 clone，再通过本地 VS Code 的 Remote - SSH 连接并打开远端仓库。仓库保留 `.vscode/launch.json` 和 `tasks.json`，可直接用 **Run DataPeek** 启动调试。
-
-在远端仓库根目录准备环境（Node.js 建议 22 LTS 或更新受支持的 LTS，Python 3.10+）：
-
-```sh
-npm ci
-python3 -m venv .venv
-.venv/bin/python -m pip install -r python/requirements.txt
-.venv/bin/python examples/create_samples.py
-npm run compile
-```
-
-按 F5，在新开的 Extension Development Host 窗口打开远端 `examples` 子目录或其他数据项目。不要在该窗口再次打开扩展源码根目录。在新窗口执行 **DataPeek: Select Python Interpreter**，选择刚创建的远端 `<仓库路径>/.venv/bin/python`，然后右键数据文件预览。
-
-F5 调试的是 TypeScript 扩展；Python renderer 的异常和 traceback 在 **Output → DataPeek** 中查看，Python 子进程断点调试尚未配置。修改 TypeScript 后重新编译并重启调试；修改 Python renderer 后重新预览即可。
-
-扩展声明 `extensionKind: ["workspace"]`，因此 Python 与扩展在远端执行，Webview 在本机显示。可通过 **Developer: Show Running Extensions** 检查执行位置。这是受支持的调试方式，但本项目还没有完成真实 SSH 环境验收。参考 [VS Code 官方 Remote SSH 扩展调试说明](https://code.visualstudio.com/api/advanced-topics/remote-extensions#debugging-using-ssh)。
-
-## 当前边界
-
-- 本轮以本地使用为目标；macOS 实机验证结果见 `docs/validation.md`。扩展使用 workspace host 架构，但 Remote SSH、Windows、Linux 尚未实机验收。
-- Plotly 是离线 HTML 输出，不提供 Python 回调或 Dash server。外部地图瓦片、CDN、任意 HTML 字符串输出暂不支持。
-- 不支持 `.npz`、HDF5 浏览器、SEG-Y 内置解析、probe、多维切片。
-- 每次操作独立 Python 进程，无常驻服务和 discovery 缓存。当前没有全局并发队列；一次打开很多不同文件会启动多个进程。
-- 正常关闭会清理预览产物；VS Code 强制退出可能留下系统临时目录中的 `datapeek-*` 文件夹。
-
-`docs/architecture.md` 和 `docs/implementation-plan.md` 包含后续设计，当前实际功能以本 README 为准。
+- [Custom readers and configuration](docs/custom-readers.md)
+- [DAS and seismic examples](docs/real-data-debug.md)
+- [Development and testing](docs/implementation-plan.md)

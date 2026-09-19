@@ -1,3 +1,4 @@
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
@@ -13,7 +14,7 @@ RUNNER = Path(__file__).resolve().parents[1] / "python" / "runner.py"
 
 class RunnerTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="datapeek test 空格 ")
+        self.temp = tempfile.TemporaryDirectory(prefix="datapeek test \u7a7a\u683c ")
         self.root = Path(self.temp.name)
         self.project = self.root / "project"
         self.project.mkdir()
@@ -29,7 +30,7 @@ class RunnerTests(unittest.TestCase):
         directory.mkdir()
         request = {"protocolVersion": 1, "requestId": str(uuid.uuid4()), "operation": operation,
                    "workspaceRoot": str(self.project), "targetPath": str(self.target),
-                   "rendererId": "builtin:npy", "options": {}}
+                   "rendererId": "builtin:npy", "options": {}, "readerPaths": []}
         request.update(kwargs)
         source = directory / "request.json"
         source.write_text(json.dumps(request))
@@ -43,12 +44,13 @@ class RunnerTests(unittest.TestCase):
     def test_line_and_image_png(self):
         for data in (np.arange(100), np.arange(120).reshape(10, 12), np.array([True, False])):
             np.save(self.target, data)
-            response, directory, _ = self.call()
+            response, directory, _ = self.call(options={"backend":"matplotlib"})
             self.assertEqual(response["status"], "ok", response)
             self.assertEqual((directory / response["artifact"]["entry"]).read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
 
+    @unittest.skipUnless(importlib.util.find_spec("plotly"), "Optional Plotly dependency is not installed")
     def test_plotly_offline_external_scripts(self):
-        response, directory, _ = self.call(options={"backend": "plotly", "title": 'unsafe </script><script>alert(1)</script> 标签'})
+        response, directory, _ = self.call(options={"backend": "plotly", "title": 'unsafe </script><script>alert(1)</script> \u6807\u7b7e'})
         self.assertEqual(response["status"], "ok", response)
         artifact = response["artifact"]
         html = (directory / artifact["entry"]).read_text()
@@ -61,13 +63,14 @@ class RunnerTests(unittest.TestCase):
         scripts = '\n'.join((directory / name).read_text() for name in artifact["files"] if 'script-' in name)
         self.assertIn('Plotly.newPlot', scripts)
 
+    @unittest.skipUnless(importlib.util.find_spec("plotly"), "Optional Plotly dependency is not installed")
     def test_plotly_heatmap(self):
         np.save(self.target, np.arange(100).reshape(10, 10))
         response, _, _ = self.call(options={"backend": "plotly"})
         self.assertEqual(response["status"], "ok", response)
 
     def test_bad_arrays(self):
-        for data in (np.zeros((2, 2, 2)), np.array([]), np.array([1j]), np.array(["text"]), np.array([{}], dtype=object)):
+        for data in (np.zeros((2, 2, 2, 2)), np.array([]), np.array([1j]), np.array(["text"]), np.array([{}], dtype=object)):
             np.save(self.target, data)
             response, _, _ = self.call()
             self.assertEqual(response["status"], "error", response)
@@ -89,7 +92,7 @@ def render(path, options): pass
 raise RuntimeError("broken import")
 ''')
         response, _, completed = self.call("discover")
-        self.assertEqual({r['id'] for r in response['renderers']}, {"builtin:npy", "workspace:good.py:render"})
+        self.assertEqual({r['id'] for r in response['renderers']}, {"builtin:npy", "builtin:scientific", "workspace:good.py:render"})
         self.assertEqual(len(response["diagnostics"]), 1)
         self.assertIn('a user debug message', completed.stdout)
         response, _, _ = self.call(rendererId="workspace:good.py:render")
@@ -130,6 +133,15 @@ def render(path, options): return "raw html"
         np.save(self.target, np.zeros((1200, 1300)))
         fig = render_npy(self.target, {})
         self.assertEqual(fig.axes[0].images[0].get_array().shape, (1024, 1024))
+
+    def test_custom_array_reader_quick_preview_and_discovery(self):
+        (self.project / '.datapeek' / 'reader.py').write_text("from datapeek import viewer\n@viewer.reader(name='Custom array',extensions=['.npy'])\ndef read(path,options):\n import numpy as np\n return np.load(path,mmap_mode='r')\n")
+        response,_,_=self.call('discover')
+        renderer=next(r for r in response['renderers'] if r['id']=='workspace:reader.py:read')
+        self.assertEqual(renderer['kind'],'array')
+        self.assertTrue(renderer['matches'])
+        response,_,_=self.call(rendererId='workspace:reader.py:read')
+        self.assertEqual(response['status'],'ok',response)
 
 
 if __name__ == '__main__':

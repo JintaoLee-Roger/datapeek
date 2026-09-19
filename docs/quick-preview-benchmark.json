@@ -1,0 +1,907 @@
+{
+  "notes": "Fresh Python per trial. Library/metadata files warm. Source-only fadvise DONTNEED verified with mincore; storage/server caches uncontrolled. No VS Code/SSH/UI time included.",
+  "trials": [
+    {
+      "seconds": 1.0669015999883413,
+      "artifactBytes": 531669,
+      "logs": "DataPeek read DAS: 0.0087s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 1.027568040881306,
+      "artifactBytes": 531656,
+      "logs": "DataPeek read DAS: 0.0077s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.3538419210817665,
+      "artifactBytes": 174399,
+      "logs": "DataPeek read DAS: 0.0074s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.34653541911393404,
+      "artifactBytes": 174400,
+      "logs": "DataPeek read DAS: 0.0072s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.3624573207926005,
+      "artifactBytes": 174400,
+      "logs": "DataPeek read DAS: 0.0076s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.3495894151274115,
+      "artifactBytes": 174401,
+      "logs": "DataPeek read DAS: 0.0066s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 1.0541394378524274,
+      "artifactBytes": 531669,
+      "logs": "DataPeek read DAS: 0.0092s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 1.050891367951408,
+      "artifactBytes": 531656,
+      "logs": "DataPeek read DAS: 0.0079s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 1.0381863350048661,
+      "artifactBytes": 531656,
+      "logs": "DataPeek read DAS: 0.0083s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 1.0397574200760573,
+      "artifactBytes": 531410,
+      "logs": "DataPeek read DAS: 0.0071s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.3836710788309574,
+      "artifactBytes": 174400,
+      "logs": "DataPeek read DAS: 0.0086s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.37743051699362695,
+      "artifactBytes": 174401,
+      "logs": "DataPeek read DAS: 0.0065s; sampled=(417, 435); estimated read/decode=5.25 MiB; output=0.69 MiB\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 958,
+        "pages": 958
+      },
+      "residencyAfter": {
+        "residentPages": 958,
+        "pages": 958
+      }
+    },
+    {
+      "seconds": 0.15255557605996728,
+      "artifactBytes": 531656,
+      "logs": "DataPeek cache HIT eca35c427780f046c586e74d0744d2042d6d94c5ba1b2e00b5d54f17e1a1ae8f\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.15093351807445288,
+      "artifactBytes": 531656,
+      "logs": "DataPeek cache HIT eca35c427780f046c586e74d0744d2042d6d94c5ba1b2e00b5d54f17e1a1ae8f\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.14773060590960085,
+      "artifactBytes": 531656,
+      "logs": "DataPeek cache HIT eca35c427780f046c586e74d0744d2042d6d94c5ba1b2e00b5d54f17e1a1ae8f\n",
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 2
+    },
+    {
+      "seconds": 0.15032604592852294,
+      "artifactBytes": 174400,
+      "logs": "DataPeek cache HIT 3abab48f5eeb2e028993db3d0d61dfe01ff9bdd63cece70f84cf38a986d2e51c\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.14785710093565285,
+      "artifactBytes": 174400,
+      "logs": "DataPeek cache HIT 3abab48f5eeb2e028993db3d0d61dfe01ff9bdd63cece70f84cf38a986d2e51c\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.14725073310546577,
+      "artifactBytes": 174400,
+      "logs": "DataPeek cache HIT 3abab48f5eeb2e028993db3d0d61dfe01ff9bdd63cece70f84cf38a986d2e51c\n",
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 2
+    },
+    {
+      "seconds": 1.7747552020009607,
+      "artifactBytes": 785764,
+      "logs": "DataPeek full slice iline: 0.0017s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0423s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.4972s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 1.2810118729248643,
+      "artifactBytes": 786160,
+      "logs": "DataPeek full slice iline: 0.0011s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0021s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0477s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.729316126788035,
+      "artifactBytes": 526748,
+      "logs": "DataPeek full slice iline: 0.0020s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0552s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.4609s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.3120855619199574,
+      "artifactBytes": 526749,
+      "logs": "DataPeek full slice iline: 0.0014s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0027s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0605s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.7438665498048067,
+      "artifactBytes": 526748,
+      "logs": "DataPeek full slice iline: 0.0016s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0465s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.5069s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.2581761288456619,
+      "artifactBytes": 526749,
+      "logs": "DataPeek full slice iline: 0.0011s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0018s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0381s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 1.7388473628088832,
+      "artifactBytes": 786090,
+      "logs": "DataPeek full slice iline: 0.0017s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0431s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.5046s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 1.2438561420422047,
+      "artifactBytes": 786219,
+      "logs": "DataPeek full slice iline: 0.0007s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0019s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0372s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 1.747743939049542,
+      "artifactBytes": 786110,
+      "logs": "DataPeek full slice iline: 0.0017s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0426s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.4923s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 1.2731986159924418,
+      "artifactBytes": 786160,
+      "logs": "DataPeek full slice iline: 0.0011s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0021s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0476s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.7242276868782938,
+      "artifactBytes": 526748,
+      "logs": "DataPeek full slice iline: 0.0017s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0451s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.4743s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.29396741604432464,
+      "artifactBytes": 526750,
+      "logs": "DataPeek full slice iline: 0.0012s; shape=(1172, 512); output=2.29 MiB\nDataPeek full slice xline: 0.0024s; shape=(512, 512); output=1.00 MiB\nDataPeek full slice time: 0.0567s; shape=(512, 1172); output=2.29 MiB\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 300033,
+        "pages": 300033
+      },
+      "residencyAfter": {
+        "residentPages": 300033,
+        "pages": 300033
+      }
+    },
+    {
+      "seconds": 0.08645398309454322,
+      "artifactBytes": 786416,
+      "logs": "DataPeek cache HIT 60b46fdbca2859b5f89c53193b84c36791ffc5a4e08e5920adaed2dbe87fc5d8\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.08204315882176161,
+      "artifactBytes": 786416,
+      "logs": "DataPeek cache HIT 60b46fdbca2859b5f89c53193b84c36791ffc5a4e08e5920adaed2dbe87fc5d8\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.08156174491159618,
+      "artifactBytes": 786416,
+      "logs": "DataPeek cache HIT 60b46fdbca2859b5f89c53193b84c36791ffc5a4e08e5920adaed2dbe87fc5d8\n",
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 2
+    },
+    {
+      "seconds": 0.0828439979813993,
+      "artifactBytes": 526749,
+      "logs": "DataPeek cache HIT 872cfd8cb33d93aaea59bcc598f2f9ba7fbaae2af2c7e7d9dc1295b5311d2c0b\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.08280502492561936,
+      "artifactBytes": 526749,
+      "logs": "DataPeek cache HIT 872cfd8cb33d93aaea59bcc598f2f9ba7fbaae2af2c7e7d9dc1295b5311d2c0b\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.08407588000409305,
+      "artifactBytes": 526749,
+      "logs": "DataPeek cache HIT 872cfd8cb33d93aaea59bcc598f2f9ba7fbaae2af2c7e7d9dc1295b5311d2c0b\n",
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 2
+    },
+    {
+      "seconds": 1.3992445240728557,
+      "artifactBytes": 708316,
+      "logs": "DataPeek full slice iline: 0.0017s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0317s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2274s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 1.1755755878984928,
+      "artifactBytes": 708074,
+      "logs": "DataPeek full slice iline: 0.0007s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0016s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0199s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.46779955085366964,
+      "artifactBytes": 472205,
+      "logs": "DataPeek full slice iline: 0.0015s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0321s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2592s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.24859690200537443,
+      "artifactBytes": 472207,
+      "logs": "DataPeek full slice iline: 0.0010s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0021s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0349s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 0,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.44752161111682653,
+      "artifactBytes": 472204,
+      "logs": "DataPeek full slice iline: 0.0013s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0315s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2432s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.209462656872347,
+      "artifactBytes": 472207,
+      "logs": "DataPeek full slice iline: 0.0008s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0020s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0273s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 1.5129807679913938,
+      "artifactBytes": 708014,
+      "logs": "DataPeek full slice iline: 0.0018s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0425s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2908s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 1.1806239169090986,
+      "artifactBytes": 708393,
+      "logs": "DataPeek full slice iline: 0.0009s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0025s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0302s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 1,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 1.3736284361220896,
+      "artifactBytes": 708664,
+      "logs": "DataPeek full slice iline: 0.0018s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0321s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2293s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 1.1414146430324763,
+      "artifactBytes": 708074,
+      "logs": "DataPeek full slice iline: 0.0008s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0016s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0199s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.4419853219296783,
+      "artifactBytes": 472205,
+      "logs": "DataPeek full slice iline: 0.0012s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0326s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.2395s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 0,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.19860024307854474,
+      "artifactBytes": 472207,
+      "logs": "DataPeek full slice iline: 0.0008s; shape=(601, 651); output=1.49 MiB\nDataPeek full slice xline: 0.0016s; shape=(401, 651); output=1.00 MiB\nDataPeek full slice time: 0.0181s; shape=(401, 601); output=0.92 MiB\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_warm",
+      "rep": 2,
+      "residencyBefore": {
+        "residentPages": 153215,
+        "pages": 153215
+      },
+      "residencyAfter": {
+        "residentPages": 153215,
+        "pages": 153215
+      }
+    },
+    {
+      "seconds": 0.08575186808593571,
+      "artifactBytes": 708529,
+      "logs": "DataPeek cache HIT 38e1254501b111aae5b2790b1a9285d92eb178736d7aec4cc51f30c11ffd2bf5\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.08168266084976494,
+      "artifactBytes": 708529,
+      "logs": "DataPeek cache HIT 38e1254501b111aae5b2790b1a9285d92eb178736d7aec4cc51f30c11ffd2bf5\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.08266332093626261,
+      "artifactBytes": 708529,
+      "logs": "DataPeek cache HIT 38e1254501b111aae5b2790b1a9285d92eb178736d7aec4cc51f30c11ffd2bf5\n",
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "rep": 2
+    },
+    {
+      "seconds": 0.08420286094769835,
+      "artifactBytes": 472207,
+      "logs": "DataPeek cache HIT f411ba8ce7732ef097fab839fa368e8bd2be7739f69889e7a3fd6fcf495b2315\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 0
+    },
+    {
+      "seconds": 0.08294645301066339,
+      "artifactBytes": 472207,
+      "logs": "DataPeek cache HIT f411ba8ce7732ef097fab839fa368e8bd2be7739f69889e7a3fd6fcf495b2315\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 1
+    },
+    {
+      "seconds": 0.08191170380450785,
+      "artifactBytes": 472207,
+      "logs": "DataPeek cache HIT f411ba8ce7732ef097fab839fa368e8bd2be7739f69889e7a3fd6fcf495b2315\n",
+      "case": "channels",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "rep": 2
+    }
+  ],
+  "summary": [
+    {
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "medianSeconds": 1.0541394378524274,
+      "artifactBytes": 531669
+    },
+    {
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "medianSeconds": 1.0397574200760573,
+      "artifactBytes": 531656
+    },
+    {
+      "case": "ridgecrest",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.15093351807445288,
+      "artifactBytes": 531656
+    },
+    {
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "medianSeconds": 0.3624573207926005,
+      "artifactBytes": 174399
+    },
+    {
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "source_warm",
+      "medianSeconds": 0.3495894151274115,
+      "artifactBytes": 174400
+    },
+    {
+      "case": "ridgecrest",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.14785710093565285,
+      "artifactBytes": 174400
+    },
+    {
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "medianSeconds": 1.747743939049542,
+      "artifactBytes": 785764
+    },
+    {
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "medianSeconds": 1.2731986159924418,
+      "artifactBytes": 786160
+    },
+    {
+      "case": "baiyun",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.08204315882176161,
+      "artifactBytes": 786416
+    },
+    {
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "medianSeconds": 0.729316126788035,
+      "artifactBytes": 526748
+    },
+    {
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "source_warm",
+      "medianSeconds": 0.29396741604432464,
+      "artifactBytes": 526749
+    },
+    {
+      "case": "baiyun",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.0828439979813993,
+      "artifactBytes": 526749
+    },
+    {
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_eviction_requested",
+      "medianSeconds": 1.3992445240728557,
+      "artifactBytes": 708316
+    },
+    {
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "source_warm",
+      "medianSeconds": 1.1755755878984928,
+      "artifactBytes": 708074
+    },
+    {
+      "case": "channels",
+      "backend": "matplotlib",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.08266332093626261,
+      "artifactBytes": 708529
+    },
+    {
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_eviction_requested",
+      "medianSeconds": 0.44752161111682653,
+      "artifactBytes": 472205
+    },
+    {
+      "case": "channels",
+      "backend": "canvas",
+      "state": "source_warm",
+      "medianSeconds": 0.209462656872347,
+      "artifactBytes": 472207
+    },
+    {
+      "case": "channels",
+      "backend": "canvas",
+      "state": "preview_cache_hit",
+      "medianSeconds": 0.08294645301066339,
+      "artifactBytes": 472207
+    }
+  ]
+}

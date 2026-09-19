@@ -1,0 +1,41 @@
+<!doctype html><html><head>__DATA_CSP__<style>
+body{font-family:system-ui;margin:16px}p{font-size:12px;opacity:.75;overflow-wrap:anywhere}h3{font-size:15px;font-weight:500;overflow-wrap:anywhere}.panels{display:flex;gap:22px;flex-wrap:wrap}.panel{flex:1;min-width:260px}.plot{display:grid;grid-template-columns:42px 1fr;gap:4px}.image{width:100%;height:clamp(240px,65vh,700px);image-rendering:pixelated;background:white}.yticks{display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:12px}.xticks{display:flex;justify-content:space-between;font-size:12px}.xlabel{text-align:center;font-size:12px}.ylabel{font-size:12px;margin-bottom:6px}.bar{width:240px;max-width:80vw;margin:18px 0}.bar canvas{width:100%;height:14px}canvas{display:block}button{cursor:pointer}#meta:empty{display:none}
+</style></head><body><h3 id="title"></h3><p id="meta" role="alert"></p><div class="panels" id="panels"></div><div class="bar" id="bar"></div>
+<script nonce="__DATA_NONCE__">
+(async()=>{'use strict';
+const started=performance.now();
+const data=__QUICK_PAYLOAD__;
+const bytes=s=>{const text=atob(s),out=new Uint8Array(text.length);for(let i=0;i<text.length;i++)out[i]=text.charCodeAt(i);return out;};
+const el=(tag,parent,text,cls)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;parent.appendChild(node);return node;};
+const fmt=n=>Number(n.toPrecision(5)).toString();
+document.getElementById('title').textContent=data.title;
+
+const parent=document.getElementById('panels');
+function panel(label,xlabel,ylabel,width,low,high){
+ const p=el('section',parent,undefined,'panel');if(label)el('h3',p,label);el('div',p,ylabel,'ylabel');
+ const grid=el('div',p,undefined,'plot');const ys=el('div',grid,undefined,'yticks');
+ [low,(low+high)/2,high].forEach(v=>el('span',ys,fmt(v)));
+ const canvas=el('canvas',grid,undefined,'image');el('span',grid,'');const xs=el('div',grid,undefined,'xticks');[0,width/2,width].forEach(v=>el('span',xs,fmt(v)));el('span',grid,'');el('div',grid,xlabel,'xlabel');return canvas;
+}
+if(data.line){
+ const buffer=bytes(data.line);const dv=new DataView(buffer.buffer);const n=buffer.length/8;
+ const [lo,hi]=data.limits;const c=panel('','Sample index','Value',(n-1)*data.step,hi,lo);c.width=1200;c.height=600;
+ const ctx=c.getContext('2d');ctx.strokeStyle='#287ac0';ctx.lineWidth=1.5;ctx.beginPath();let pending=true;
+ for(let i=0;i<n;i++){const v=dv.getFloat64(i*8,true);if(!Number.isFinite(v)){pending=true;continue;}const x=n===1?600:i/(n-1)*1199,y=(hi-v)/(hi-lo)*599;if(pending){ctx.moveTo(x,y);pending=false;}else ctx.lineTo(x,y);if(n===1)ctx.fillRect(x,y,2,2);}ctx.stroke();
+}else{
+ const lut=bytes(data.lut),colors=new Uint32Array(lut.buffer);
+ for(const p of data.panels){
+  const c=panel(data.shape.length===3?p.label.split(' (')[0]:'',p.xlabel,p.ylabel,p.width,0,p.height);c.width=p.cols;c.height=p.rows;
+  let indices=bytes(p.pixels);
+  if(p.compressed){const stream=new Blob([indices]).stream().pipeThrough(new DecompressionStream('deflate'));indices=new Uint8Array(await new Response(stream).arrayBuffer());}
+  const mask=p.mask?bytes(p.mask):null,rgba=new Uint8ClampedArray(indices.length*4);
+  const pixels=new Uint32Array(rgba.buffer);
+  for(let i=0;i<indices.length;i++){pixels[i]=colors[indices[i]];if(mask&&!mask[i])rgba[i*4+3]=0;}
+  c.getContext('2d').putImageData(new ImageData(rgba,p.cols,p.rows),0,0);
+ }
+ const bar=document.getElementById('bar'),c=el('canvas',bar);c.width=256;c.height=1;c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(lut),256,1),0,0);
+ const labels=el('div',bar,undefined,'xticks');data.limits.forEach(v=>el('span',labels,fmt(v)));el('p',bar,'Amplitude');
+}
+window.datapeekQuickReady={renderMs:performance.now()-started};
+})().catch(error=>{document.getElementById('meta').textContent='Preview failed: '+error.message;console.error(error);});
+</script></body></html>

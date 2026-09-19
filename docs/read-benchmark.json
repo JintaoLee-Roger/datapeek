@@ -1,0 +1,238 @@
+[
+  {
+    "case": "zhoushan",
+    "slices": null,
+    "wall_seconds": 0.9444,
+    "process_seconds": 0.872888932004571,
+    "peak_rss_mib": 188.75,
+    "status": "ok",
+    "read_log": [
+      "DataPeek NPZ decode: 0.0169s; 16.00 MiB",
+      "DataPeek read DAS: 0.0006s; sampled=(512, 512); estimated read/decode=1.00 MiB; output=1.00 MiB"
+    ]
+  },
+  {
+    "case": "ridgecrest",
+    "slices": null,
+    "wall_seconds": 1.0318,
+    "process_seconds": 0.9504442110192031,
+    "peak_rss_mib": 199.87109375,
+    "status": "ok",
+    "read_log": [
+      "DataPeek read DAS: 0.0077s; sampled=(417, 412); estimated read/decode=5.25 MiB; output=0.66 MiB"
+    ]
+  },
+  {
+    "case": "whale",
+    "slices": null,
+    "wall_seconds": 1.4328,
+    "process_seconds": 1.3603807939216495,
+    "peak_rss_mib": 219.75,
+    "status": "ok",
+    "read_log": [
+      "DataPeek read DAS: 0.4344s; sampled=(453, 500); estimated read/decode=140.45 MiB; output=0.86 MiB"
+    ]
+  },
+  {
+    "case": "marmousi",
+    "slices": null,
+    "wall_seconds": 0.8647,
+    "process_seconds": 0.7985930449794978,
+    "peak_rss_mib": 179.3984375,
+    "status": "ok",
+    "read_log": [
+      "DataPeek NPZ decode: 0.0270s; 4.40 MiB",
+      "DataPeek read DAS: 0.0004s; sampled=(361, 400); estimated read/decode=0.55 MiB; output=0.55 MiB"
+    ]
+  },
+  {
+    "case": "forge",
+    "slices": null,
+    "wall_seconds": 1.0819,
+    "process_seconds": 1.0172266559675336,
+    "peak_rss_mib": 188.11328125,
+    "status": "ok",
+    "read_log": [
+      "DataPeek NPZ decode: 0.0084s; 7.79 MiB",
+      "DataPeek read DAS: 0.0006s; sampled=(511, 500); estimated read/decode=0.97 MiB; output=0.97 MiB"
+    ]
+  },
+  {
+    "case": "volume_zarr",
+    "slices": null,
+    "wall_seconds": 1.798,
+    "process_seconds": 1.702639873023145,
+    "peak_rss_mib": 212.8046875,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0094s; shape=(512, 512); output=0.50 MiB",
+      "DataPeek full slice xline: 0.0398s; shape=(512, 512); output=0.50 MiB",
+      "DataPeek full slice time: 0.0360s; shape=(512, 512); output=0.50 MiB"
+    ]
+  },
+  {
+    "case": "volume_zarr",
+    "slices": [
+      "iline",
+      "xline"
+    ],
+    "wall_seconds": 1.2711,
+    "process_seconds": 1.1727837839862332,
+    "peak_rss_mib": 205.6484375,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0094s; shape=(512, 512); output=0.50 MiB",
+      "DataPeek full slice xline: 0.0419s; shape=(512, 512); output=0.50 MiB"
+    ]
+  },
+  {
+    "case": "volume_zarr",
+    "slices": [
+      "iline",
+      "xline",
+      "time"
+    ],
+    "wall_seconds": 1.5315,
+    "process_seconds": 1.4363351940410212,
+    "peak_rss_mib": 218.17578125,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0102s; shape=(512, 512); output=0.50 MiB",
+      "DataPeek full slice xline: 0.0431s; shape=(512, 512); output=0.50 MiB",
+      "DataPeek full slice time: 0.0381s; shape=(512, 512); output=0.50 MiB"
+    ]
+  },
+  {
+    "case": "baiyun",
+    "slices": null,
+    "wall_seconds": 1.2844,
+    "process_seconds": 1.21695875399746,
+    "peak_rss_mib": 1256.8671875,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0012s; shape=(1172, 512); output=2.29 MiB",
+      "DataPeek full slice xline: 0.0023s; shape=(512, 512); output=1.00 MiB",
+      "DataPeek full slice time: 0.0621s; shape=(512, 1172); output=2.29 MiB"
+    ]
+  },
+  {
+    "case": "baiyun",
+    "slices": [
+      "iline",
+      "xline"
+    ],
+    "wall_seconds": 1.0928,
+    "process_seconds": 1.0250718619208783,
+    "peak_rss_mib": 142.52734375,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0013s; shape=(1172, 512); output=2.29 MiB",
+      "DataPeek full slice xline: 0.0020s; shape=(512, 512); output=1.00 MiB"
+    ]
+  },
+  {
+    "case": "baiyun",
+    "slices": [
+      "iline",
+      "xline",
+      "time"
+    ],
+    "wall_seconds": 1.2686,
+    "process_seconds": 1.2015224039787427,
+    "peak_rss_mib": 1257.296875,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0013s; shape=(1172, 512); output=2.29 MiB",
+      "DataPeek full slice xline: 0.0022s; shape=(512, 512); output=1.00 MiB",
+      "DataPeek full slice time: 0.0609s; shape=(512, 1172); output=2.29 MiB"
+    ]
+  },
+  {
+    "case": "channels",
+    "slices": null,
+    "wall_seconds": 1.1473,
+    "process_seconds": 1.082744027953595,
+    "peak_rss_mib": 673.54296875,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0008s; shape=(601, 651); output=1.49 MiB",
+      "DataPeek full slice xline: 0.0014s; shape=(401, 651); output=1.00 MiB",
+      "DataPeek full slice time: 0.0260s; shape=(401, 601); output=0.92 MiB"
+    ]
+  },
+  {
+    "case": "channels",
+    "slices": [
+      "iline",
+      "xline"
+    ],
+    "wall_seconds": 1.1066,
+    "process_seconds": 1.0395327969454229,
+    "peak_rss_mib": 130.3125,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0009s; shape=(601, 651); output=1.49 MiB",
+      "DataPeek full slice xline: 0.0016s; shape=(401, 651); output=1.00 MiB"
+    ]
+  },
+  {
+    "case": "channels",
+    "slices": [
+      "iline",
+      "xline",
+      "time"
+    ],
+    "wall_seconds": 1.6027,
+    "process_seconds": 1.5340509259840474,
+    "peak_rss_mib": 673.4765625,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0008s; shape=(601, 651); output=1.49 MiB",
+      "DataPeek full slice xline: 0.0015s; shape=(401, 651); output=1.00 MiB",
+      "DataPeek full slice time: 0.0250s; shape=(401, 601); output=0.92 MiB"
+    ]
+  },
+  {
+    "case": "fans",
+    "slices": null,
+    "wall_seconds": 1.0062,
+    "process_seconds": 0.9207372170640156,
+    "peak_rss_mib": 145.87890625,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0407s; shape=(753, 501); output=1.44 MiB"
+    ]
+  },
+  {
+    "case": "fans",
+    "slices": [
+      "iline",
+      "xline"
+    ],
+    "wall_seconds": 1.2855,
+    "process_seconds": 1.1914559449069202,
+    "peak_rss_mib": 234.71484375,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0413s; shape=(753, 501); output=1.44 MiB",
+      "DataPeek full slice xline: 0.0614s; shape=(1131, 501); output=2.16 MiB"
+    ]
+  },
+  {
+    "case": "fans",
+    "slices": [
+      "iline",
+      "xline",
+      "time"
+    ],
+    "wall_seconds": 1.6547,
+    "process_seconds": 1.568048540968448,
+    "peak_rss_mib": 351.70703125,
+    "status": "ok",
+    "read_log": [
+      "DataPeek full slice iline: 0.0392s; shape=(753, 501); output=1.44 MiB",
+      "DataPeek full slice xline: 0.0572s; shape=(1131, 501); output=2.16 MiB",
+      "DataPeek full slice time: 0.0825s; shape=(1131, 753); output=3.25 MiB"
+    ]
+  }
+]
