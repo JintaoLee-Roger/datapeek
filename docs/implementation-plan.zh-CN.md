@@ -39,6 +39,14 @@ npm run package
 
 VSIX 版本来自 `package.json`。通过 **Extensions: Install from VSIX...** 安装生成的文件，再执行 **Developer: Reload Window** 并重新打开预览。
 
+要向其他人分享，先完成上述打包，再运行：
+
+```sh
+python scripts/build_share_bundle.py
+```
+
+生成的 `build/datapeek-0.0.1-share.zip` 包含 VSIX、中英文文档、预览截图和示例脚本。收件人从 `README.zh-CN.md` 开始即可，不需要源码构建环境。分享包不包含 Python 环境或依赖安装包。
+
 ## 文档维护
 
 文档、界面文本和代码注释默认使用英文。每份 Markdown 文档都有 `.zh-CN.md` 对应版本，行为变化时同步更新；两种版本的代码示例均使用英文注释，基准 JSON 共用。

@@ -1,17 +1,25 @@
 # DataPeek
 
+<img src="media/icon.png" alt="DataPeek icon" width="96" height="96">
+
 [English](README.md) | 简体中文
 
 轻量科学数据预览插件：快速查看数据形态，按需检查切片，并通过 Python 脚本支持自己的格式。
 
+作者：Jintao Li · [lijintaobt@gmail.com](mailto:lijintaobt@gmail.com)
+
 ## 开始使用
 
-1. 运行 **Extensions: Install from VSIX...**，安装 DataPeek 的 `.vsix` 文件。
-2. 在 Python 3.10+ 环境中安装 `numpy` 和 `matplotlib`。HDF5 需要 `h5py`，Zarr 需要 `zarr`；详细查看需要 `plotly`，3D 和 Petrel 配色需要 `cigvis` 及其查看器依赖。
+1. 在 VS Code 1.90+ 中运行 **Extensions: Install from VSIX...**，安装分享包提供的 `datapeek-0.0.1.vsix`。
+2. 在 Python 3.10+ 环境中安装 `numpy` 和 `matplotlib`。HDF5 需要 `h5py`，Zarr 需要 `zarr`；详细查看需要 `plotly`，3D 和 Petrel 配色需要 `cigvis[viser]`。
 3. 运行 **DataPeek: Select Python Interpreter** 选择解释器。
 4. 右键文件或支持的数据目录，选择 **Preview with DataPeek**。
 
 使用 Remote SSH 时，Python 依赖和读取脚本应安装在远端。预览在当前编辑器组打开。更新插件后，执行 **Developer: Reload Window** 并重新打开已有预览。
+
+第一次使用请按[安装与首次预览](docs/getting-started.zh-CN.md)操作，包含依赖安装命令、小型测试数据、Settings JSON 入口和常见问题。使用插件无需安装 Node.js/npm。
+
+![合成数据的快速预览](docs/images/quick-preview.png)
 
 ## 支持的数据
 
@@ -37,6 +45,8 @@
 | Full View | 返回已加载的概览 |
 | vmin/vmax、Colormap、Apply | 调整色阶和配色，不重新读取数据 |
 | Reset Defaults | 恢复读取器配置的显示默认值 |
+
+快速预览和详细查看都同时适配窗口的宽度与高度。默认保留原始切片的行列比例；折线图使用 2:1。在详细查看中，取消 **Original aspect**，再设置 **W/H**，即可指定显示宽高比（例如 `2` 表示 2:1）。设置会按视图记住，不会重新读取数据或改变色阶。读取器默认参数可设置 `"preserve_aspect": false, "aspect_ratio": 2`，这些参数也适用于快速预览。
 
 色阶初始化后保持固定，直到手动修改或重置。仅缩放不会提高数据分辨率。配色包括 `gray`、`seismic`、`RdBu_r`、`viridis` 和 `Petrel`。
 

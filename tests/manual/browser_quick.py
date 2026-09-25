@@ -40,7 +40,17 @@ async def main():
             assert len(result['canvases'])==(3 if path.stem in ['baiyun','channels','volume_zarr'] else 1)
             await page.click('#detail');await page.click('#choose')
             assert await page.evaluate('window.actions')==[dict(action='detail'),dict(action='chooseReader')]
-            await page.mouse.wheel(0,-500);await page.set_viewport_size(dict(width=800,height=700))
+            for viewport in [dict(width=800,height=700),dict(width=1200,height=500),dict(width=480,height=900)]:
+                await page.set_viewport_size(viewport)
+                await page.wait_for_timeout(50)
+                ratios=await page.locator('.image').evaluate_all('(nodes)=>nodes.map(c=>{const r=c.getBoundingClientRect();return r.width/r.height;})')
+                bounds=await page.locator('.image').evaluate_all('(nodes)=>nodes.every(c=>{const r=c.getBoundingClientRect();return r.bottom<=innerHeight && r.right<=innerWidth;})')
+                assert bounds,viewport
+                target=[p['aspect'] for p in payload['panels']] if payload['panels'] else [2]
+                if payload.get('preserveAspect') is False:target=[payload['aspectRatio']]*len(target)
+                sizes=await page.locator('.image').evaluate_all('(nodes)=>nodes.map(c=>{const r=c.getBoundingClientRect();return [r.width,r.height];})')
+                assert all(abs(w-r*h)<max(.1,r*.02) for (w,h),r in zip(sizes,target)),(ratios,target)
+            await page.mouse.wheel(0,-500)
             assert await page.evaluate('window.actions.length')==2
             assert not errors,errors
             if path.stem in ('ridgecrest','baiyun'):await page.screenshot(path=str(root/(path.stem+'.png')))

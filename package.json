@@ -3,7 +3,11 @@
   "displayName": "DataPeek",
   "description": "An extensible Python-powered scientific data viewer for VS Code.",
   "version": "0.0.1",
-  "publisher": "datapeek-local",
+  "publisher": "JintaoLi",
+  "author": {
+    "name": "Jintao Li",
+    "email": "lijintaobt@gmail.com"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
@@ -206,5 +210,6 @@
   },
   "activationEvents": [
     "onStartupFinished"
-  ]
+  ],
+  "icon": "media/icon.png"
 }

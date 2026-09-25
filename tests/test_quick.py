@@ -19,6 +19,7 @@ class QuickTests(unittest.TestCase):
         a=p['panels'][0]
         self.assertEqual((a['rows'],a['cols']),(3,2))
         self.assertEqual(a['width'],.02)
+        self.assertEqual(a['aspect'],2/3)
         self.assertEqual(list(base64.b64decode(a['mask'])),[1,1,1,1,0,1])
         self.assertEqual(p['title'],'event 7')
 
@@ -34,6 +35,16 @@ class QuickTests(unittest.TestCase):
         self.assertEqual([(x['rows'],x['cols']) for x in p['panels']],[(13,9),(9,11)])
         self.assertEqual(p['panels'][0]['xlabel'],'iline')
         self.assertEqual(p['panels'][0]['ylabel'],'time')
+        self.assertEqual([x['aspect'] for x in p['panels']],[17/25,21/17])
+
+    def test_custom_aspect_preserves_pixels(self):
+        values=np.arange(2000,dtype='float32').reshape(200,10)
+        original=payload(values,{},'tall')
+        custom=payload(values,{'preserve_aspect':False,'aspect_ratio':2},'tall')
+        self.assertFalse(custom['preserveAspect'])
+        self.assertEqual(custom['aspectRatio'],2)
+        self.assertEqual(original['panels'],custom['panels'])
+        self.assertEqual(original['limits'],custom['limits'])
 
     def test_common_lut_matches_matplotlib(self):
         import matplotlib

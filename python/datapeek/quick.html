@@ -1,5 +1,5 @@
 <!doctype html><html><head>__DATA_CSP__<style>
-body{font-family:system-ui;margin:16px}p{font-size:12px;opacity:.75;overflow-wrap:anywhere}h3{font-size:15px;font-weight:500;overflow-wrap:anywhere}.panels{display:flex;gap:22px;flex-wrap:wrap}.panel{flex:1;min-width:260px}.plot{display:grid;grid-template-columns:42px 1fr;gap:4px}.image{width:100%;height:clamp(240px,65vh,700px);image-rendering:pixelated;background:white}.yticks{display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:12px}.xticks{display:flex;justify-content:space-between;font-size:12px}.xlabel{text-align:center;font-size:12px}.ylabel{font-size:12px;margin-bottom:6px}.bar{width:240px;max-width:80vw;margin:18px 0}.bar canvas{width:100%;height:14px}canvas{display:block}button{cursor:pointer}#meta:empty{display:none}
+body{font-family:system-ui;margin:16px}p{font-size:12px;opacity:.75;overflow-wrap:anywhere}h3{font-size:15px;font-weight:500;overflow-wrap:anywhere}.panels{display:flex;gap:22px;flex-wrap:nowrap}.panel{flex:1;min-width:0}.plot{margin:auto;display:grid;grid-template-columns:42px minmax(0,1fr);gap:4px}.image{width:100%;height:auto;aspect-ratio:var(--image-aspect,auto);image-rendering:pixelated;background:white}.yticks{display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:12px}.xticks{display:flex;justify-content:space-between;font-size:12px}.xlabel{text-align:center;font-size:12px}.ylabel{font-size:12px;margin-bottom:6px}.bar{width:240px;max-width:80vw;margin:18px 0}.bar canvas{width:100%;height:14px}canvas{display:block}button{cursor:pointer}#meta:empty{display:none}
 </style></head><body><h3 id="title"></h3><p id="meta" role="alert"></p><div class="panels" id="panels"></div><div class="bar" id="bar"></div>
 <script nonce="__DATA_NONCE__">
 (async()=>{'use strict';
@@ -25,7 +25,7 @@ if(data.line){
 }else{
  const lut=bytes(data.lut),colors=new Uint32Array(lut.buffer);
  for(const p of data.panels){
-  const c=panel(data.shape.length===3?p.label.split(' (')[0]:'',p.xlabel,p.ylabel,p.width,0,p.height);c.width=p.cols;c.height=p.rows;
+  const c=panel(data.shape.length===3?p.label.split(' (')[0]:'',p.xlabel,p.ylabel,p.width,0,p.height);c.width=p.cols;c.height=p.rows;c.style.setProperty('--image-aspect',String(p.aspect));
   let indices=bytes(p.pixels);
   if(p.compressed){const stream=new Blob([indices]).stream().pipeThrough(new DecompressionStream('deflate'));indices=new Uint8Array(await new Response(stream).arrayBuffer());}
   const mask=p.mask?bytes(p.mask):null,rgba=new Uint8ClampedArray(indices.length*4);
@@ -36,6 +36,24 @@ if(data.line){
  const bar=document.getElementById('bar'),c=el('canvas',bar);c.width=256;c.height=1;c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(lut),256,1),0,0);
  const labels=el('div',bar,undefined,'xticks');data.limits.forEach(v=>el('span',labels,fmt(v)));el('p',bar,'Amplitude');
 }
+// Fit the image and its axes inside both viewport dimensions.
+function fit(){
+ const bar=document.getElementById('bar');
+ if(data.line)bar.style.display='none';
+ document.querySelectorAll('.image').forEach((canvas,i)=>{
+  const grid=canvas.parentElement;
+  const aspect=data.preserveAspect===false?data.aspectRatio:(data.panels[i]?.aspect??2);
+  const availableWidth=Math.max(1,grid.parentElement.clientWidth-46);
+  const footer=data.line?16:bar.offsetHeight+52;
+  const axes=grid.children[3].offsetHeight+grid.children[5].offsetHeight+8;
+  const availableHeight=Math.max(1,innerHeight-grid.getBoundingClientRect().top-footer-axes);
+  const width=Math.min(availableWidth,availableHeight*aspect);
+  grid.style.width=(width+46)+'px';
+  canvas.style.width=width+'px';canvas.style.height=(width/aspect)+'px';
+ });
+}
+fit();window.addEventListener('resize',fit);
+document.fonts.ready.then(fit);
 window.datapeekQuickReady={renderMs:performance.now()-started};
 })().catch(error=>{document.getElementById('meta').textContent='Preview failed: '+error.message;console.error(error);});
 </script></body></html>

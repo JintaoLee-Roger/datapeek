@@ -15,6 +15,23 @@ Recorded for version 0.0.1 on 2026-09-19. Test results describe the checked envi
 | Worker lifecycle | Start, stop, restart, and port release after process exit checked |
 | Custom Figure example | NPZ/Zarr inputs generated seismic/fault overlays; numerical tests checked reflection, convolution alignment, and transparent masks |
 
+## Tested dependencies
+
+Linux / Python 3.12 environment recorded on 2026-09-23. This is a troubleshooting reference, not a minimum-version requirement or dependency lock.
+
+| Dependency | Installed version |
+| --- | --- |
+| NumPy | 2.4.4 |
+| Matplotlib | 3.10.9 |
+| Plotly | 7.1.0 |
+| h5py | 3.16.0 |
+| Zarr | 3.2.1 |
+| cigvis | 0.3.2 |
+| Viser | 1.0.30 |
+| SeisVol | 0.1.0 |
+
+cigvis and SeisVol are editable development installations; published packages with the same version numbers are not guaranteed to contain identical code. Basic NPY previews and Plotly Detailed View do not require these two libraries. Validate 3D and SeisVol reading with the recipient’s actual installation.
+
 ## Compatibility limits
 
 Python 3.12 has been tested; the declared Python minimum is 3.10. Tests use installed scientific dependencies and a cigvis version supporting lazy slice providers.

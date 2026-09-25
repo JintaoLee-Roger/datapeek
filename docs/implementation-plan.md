@@ -39,6 +39,14 @@ npm run package
 
 The VSIX version comes from `package.json`. Install the generated VSIX using **Extensions: Install from VSIX...**, then run **Developer: Reload Window** and reopen previews.
 
+To share with another user, build the VSIX above, then run:
+
+```sh
+python scripts/build_share_bundle.py
+```
+
+The resulting `build/datapeek-0.0.1-share.zip` contains the VSIX, bilingual guides, preview screenshot, and example scripts. Recipients start at `README.md`; no source-build environment is needed. The bundle does not include a Python environment or dependency installers.
+
 ## Documentation
 
 English is the default for documentation, UI strings, and source comments. Each Markdown guide has a `.zh-CN.md` counterpart; update both when behavior changes. Code examples use English comments in both editions. Benchmark JSON is shared.

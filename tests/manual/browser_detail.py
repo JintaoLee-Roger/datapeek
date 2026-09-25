@@ -13,6 +13,7 @@ async def main():
     session=DetailSession(Path('/home/jtli/data/seismic/seismic_data/baiyun/sx_cut.npy'),{})
     actions=[]
     errors=[]
+    sample_gate=asyncio.Event();sample_gate.set()
     async with async_playwright() as p:
         browser=await p.chromium.launch(headless=True,args=['--no-sandbox','--allow-file-access-from-files','--enable-unsafe-swiftshader'])
         page=await browser.new_page(viewport={'width':1440,'height':1000})
@@ -20,6 +21,7 @@ async def main():
         async def host(message):
             actions.append(message)
             if message['action']=='sample':
+                await sample_gate.wait()
                 result=await asyncio.to_thread(session.sample,message['options'])
                 result['region']=message['options'].get('region',False)
                 result['clientRequest']=message['options'].get('clientRequest')
@@ -32,6 +34,53 @@ async def main():
             await page.wait_for_function('() => document.getElementById("plot").data?.length===1')
             await page.wait_for_function('() => document.getElementById("status").textContent === ""')
             original_limits=await page.evaluate('document.getElementById("plot").data.map(t=>[t.zmin,t.zmax])')
+            # Hold a real slice request open and inspect every frame, not just its endpoints.
+            await page.wait_for_timeout(150)
+            await page.evaluate("""()=>{
+                window.layoutSamples=[];window.recordLayout=true;
+                const sample=()=>{const p=document.getElementById('plot'),r=p.getBoundingClientRect();
+                    window.layoutSamples.push([r.x,r.y,r.width,r.height,p._fullLayout._size.w,p._fullLayout._size.h]);
+                    if(window.recordLayout)requestAnimationFrame(sample);};sample();
+            }""")
+            sample_gate.clear()
+            previous_index=int(await page.locator('#index').input_value())
+            await page.fill('#index',str(previous_index+1));await page.locator('#index').press('Tab')
+            await page.wait_for_function('() => document.getElementById("status").textContent === "Reading slice…"')
+            await page.wait_for_timeout(200)
+            sample_gate.set()
+            await page.wait_for_function('() => document.getElementById("status").textContent === "" && !document.getElementById("apply").disabled')
+            await page.wait_for_timeout(150)
+            # Long errors must also stay within the reserved status area.
+            await page.evaluate("""()=>window.dispatchEvent(new MessageEvent('message',{data:{type:'error',message:'A long reader error. '.repeat(80)}}))""")
+            await page.wait_for_timeout(150)
+            samples=await page.evaluate('() => {window.recordLayout=false;return window.layoutSamples;}')
+            assert len(samples)>5
+            assert all(abs(a-b)<.1 for row in samples for a,b in zip(row,samples[0])),samples
+            assert await page.locator('#status').get_attribute('title'), 'Full error should remain accessible'
+            await page.evaluate("""()=>window.dispatchEvent(new MessageEvent('message',{data:{type:'viserStopped'}}))""")
+
+            before_resize=await page.evaluate('JSON.stringify(document.getElementById("plot").data)')
+            read_count=sum(m['action']=='sample' for m in actions)
+            for width,height in [(800,700),(1200,500),(1200,280),(480,900),(1440,1000)]:
+                await page.set_viewport_size(dict(width=width,height=height))
+                await page.wait_for_timeout(150)
+                ratio=await page.evaluate('(()=>{const s=document.getElementById("plot")._fullLayout._size;return s.w/s.h;})()')
+                assert abs(ratio-session.shape[1]/session.shape[2])<.01,ratio
+                bounds=await page.evaluate('''()=>{const p=document.getElementById('plot').getBoundingClientRect(),f=document.getElementById('plotFrame').getBoundingClientRect();return {fits:p.left>=f.left-1&&p.right<=f.right+1&&p.top>=f.top-1&&p.bottom<=f.bottom+1,visible:p.bottom<=innerHeight};}''')
+                assert bounds['fits'] and bounds['visible'],bounds
+                assert await page.evaluate('JSON.stringify(document.getElementById("plot").data)')==before_resize
+            assert sum(m['action']=='sample' for m in actions)==read_count,'Resize reread data'
+
+            await page.uncheck('#preserveAspect')
+            await page.fill('#aspectRatio','1.5');await page.locator('#aspectRatio').press('Tab')
+            await page.wait_for_timeout(150)
+            ratio=await page.evaluate('(()=>{const s=document.getElementById("plot")._fullLayout._size;return s.w/s.h;})()')
+            assert abs(ratio-1.5)<.01,ratio
+            assert sum(m['action']=='sample' for m in actions)==read_count
+            assert await page.evaluate('JSON.stringify(document.getElementById("plot").data)')==before_resize
+            assert any(m['action']=='save' and m['options'].get('aspect_ratio')==1.5 for m in actions)
+            await page.check('#preserveAspect')
+
             await page.select_option('#axis','xline')
             await page.wait_for_function('() => document.getElementById("plot").layout.xaxis.title.text==="iline"')
             assert await page.evaluate('document.getElementById("plot").data.map(t=>[t.zmin,t.zmax])')==original_limits,'Slice change reset color limits'

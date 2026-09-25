@@ -28,6 +28,7 @@ class DetailTests(unittest.TestCase):
             result=self.session.sample({'axis':axis,'index':3,'xrange':[5,10],'yrange':[6,12]})
             np.testing.assert_array_equal(values(result),expected[6:13,5:11])
             self.assertFalse(result['sampled'])
+            self.assertEqual(result['displayAspect'],expected.shape[1]/expected.shape[0])
 
     def test_slice_is_reused_for_zoom_and_color(self):
         self.session.sample({'axis':'iline','index':3})

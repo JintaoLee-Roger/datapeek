@@ -4,10 +4,43 @@
 const vscode=acquireVsCodeApi();
 const {info,saved,open3D}=window.DATA_PEEK;
 const $=id=>document.getElementById(id);
-const plot=$('plot');
+const plot=$('plot'),plotFrame=$('plotFrame');
+let displayAspect=2, resizeFrame, observedWidth=-1, observedHeight=-1;
+const margins={l:65,r:80,t:20,b:55,autoexpand:false};
+function plotSize(){
+ const availableWidth=Math.max(1,plotFrame.clientWidth-margins.l-margins.r);
+ const availableHeight=Math.max(1,plotFrame.clientHeight-margins.t-margins.b);
+ const imageWidth=Math.min(availableWidth,availableHeight*(preserveAspect?displayAspect:customAspect));
+ return {width:imageWidth+margins.l+margins.r,height:imageWidth/(preserveAspect?displayAspect:customAspect)+margins.t+margins.b};
+}
+const observer=new ResizeObserver(entries=>{
+ const {width,height}=entries[0].contentRect;
+ if(width===observedWidth&&height===observedHeight)return;
+ observedWidth=width;observedHeight=height;
+ cancelAnimationFrame(resizeFrame);
+ resizeFrame=requestAnimationFrame(()=>{if(plot.data)void Plotly.relayout(plot,plotSize());});
+});
+observer.observe(plotFrame);
 let payload, overview=null, fixedLimits=null, first=true, requestNumber=0, loading=false;
 const axes=['iline','xline','time'];
 const initial={...info.defaults,...saved};
+let preserveAspect=initial.preserve_aspect!==false;
+let customAspect=Number.isFinite(initial.aspect_ratio)&&initial.aspect_ratio>0?initial.aspect_ratio:2;
+function aspectControls(){
+ $('preserveAspect').checked=preserveAspect;
+ $('aspectRatio').value=customAspect;
+ $('aspectRatio').disabled=preserveAspect;
+}
+aspectControls();
+async function changeAspect(){
+ const ratio=Number($('aspectRatio').value);
+ if(!Number.isFinite(ratio)||ratio<=0){aspectControls();return;}
+ preserveAspect=$('preserveAspect').checked;customAspect=ratio;aspectControls();
+ if(plot.data)await Plotly.relayout(plot,plotSize());
+ save();
+}
+$('preserveAspect').onchange=changeAspect;
+$('aspectRatio').onchange=changeAspect;
 $('axis').value=axes.includes(initial.axis)?initial.axis:(initial.slices||['iline'])[0];
 let positions={};
 axes.forEach((axis,i)=>positions[axis]=Math.max(0,Math.min((info.shape[i]||1)-1,initial.positions?.[axis]??initial[axis]??Math.floor((info.shape[i]||1)/2))));
@@ -21,7 +54,7 @@ const large=info.nbytes>(initial.large_volume_gb??1.5)*1e9;
 ['vx','vy','vz'].forEach((id,i)=>$(id).checked=initial.slices?initial.slices.includes(axes[i]):(!large||i===0));
 if (!info.volume) { $('viserAxes').hidden=true; $('axisLabel').hidden=true;$('indexLabel').hidden=true;$('viser').hidden=true; }
 if(info.shape.length===1){for(const id of ['vmin','vmax','cmap'])$(id).closest('label').hidden=true;$('apply').hidden=true;}
-function status(text){$('status').textContent=text;}
+function status(text){const node=$('status');node.textContent=text;node.title=text;}
 function indexControls(){const axis=$('axis').value;const max=info.shape[axes.indexOf(axis)]-1;for(const id of ['index','slider']){$(id).max=max;$(id).value=positions[axis];}}
 indexControls();
 function colors(){return {vmin:fixedLimits?.[0]??null,vmax:fixedLimits?.[1]??null,clip_percentile:initial.clip_percentile??99};}
@@ -30,7 +63,7 @@ function inputLimits(){
  if(!low||!high||!Number.isFinite(vmin)||!Number.isFinite(vmax)||vmin>=vmax)throw Error('Enter finite values with vmin < vmax.');
  return [vmin,vmax];
 }
-function state(){return {axis:$('axis').value,positions:{...positions},cmap:activeCmap,...colors()};}
+function state(){return {preserve_aspect:preserveAspect,aspect_ratio:customAspect,axis:$('axis').value,positions:{...positions},cmap:activeCmap,...colors()};}
 function save(){vscode.postMessage({action:'save',options:state()});}
 function busy(value){loading=value;for(const id of ['region','reset','apply','defaults','viser'])$(id).disabled=value;}
 function restoreDisplayed(){
@@ -72,7 +105,7 @@ async function recolor(){
 }
 async function render(result){
  if(result.clientRequest!==undefined && result.clientRequest!==requestNumber)return;
- if(!result.region)overview=result;
+ if(!result.region){overview=result;displayAspect=result.displayAspect??(result.kind==='line'?2:result.shape[1]/result.shape[0]);}
  const bytes=Uint8Array.from(atob(result.data),c=>c.charCodeAt(0));
  const values=new Float32Array(bytes.buffer);payload={...result,values};
  const clean=n=>Number.isFinite(n)?n:null;
@@ -83,7 +116,7 @@ async function render(result){
  const z=line?undefined:Array.from({length:result.shape[0]},(_,row)=>Array.from(values.subarray(row*n,(row+1)*n),clean));
  const [low,high]=limits();
  const trace=line?{type:'scatter',mode:'lines',x,y,line:{width:1}}:{type:'heatmap',x,y,z,zmin:low,zmax:high,zauto:false,colorscale:scale(),zsmooth:false,hoverongaps:false,hovertemplate:'x=%{x}<br>y=%{y}<br>value=%{z}<extra></extra>'};
- await Plotly.react(plot,[trace],{margin:{l:65,r:35,t:20,b:55},dragmode:'zoom',xaxis:{title:{text:result.xlabel},range:result.view?.xrange||result.xbounds},yaxis:{title:{text:result.ylabel},...(line?{}:{range:result.view?.yrange||[result.ybounds[1],result.ybounds[0]]})}},{responsive:true,scrollZoom:true,displaylogo:false});
+ await Plotly.react(plot,[trace],{...plotSize(),autosize:false,margin:margins,dragmode:'zoom',xaxis:{title:{text:result.xlabel},range:result.view?.xrange||result.xbounds},yaxis:{title:{text:result.ylabel},...(line?{}:{range:result.view?.yrange||[result.ybounds[1],result.ybounds[0]]})}},{responsive:false,scrollZoom:true,displaylogo:false});
  $('vmin').value=low;$('vmax').value=high;
  restoreDisplayed();busy(false);
  save();
@@ -106,6 +139,7 @@ $('region').onclick=()=>{if(payload&&!loading)request(true);};
 $('reset').onclick=()=>{if(overview&&!loading)void render({...overview,clientRequest:requestNumber});};
 $('defaults').onclick=()=>{
  const defaults=info.defaults;
+ preserveAspect=defaults.preserve_aspect!==false;customAspect=defaults.aspect_ratio??2;aspectControls();
  fixedLimits=Number.isFinite(defaults.vmin)&&Number.isFinite(defaults.vmax)?[defaults.vmin,defaults.vmax]:null;
  activeCmap=Array.from($('cmap').options).some(o=>o.value===defaults.cmap)?defaults.cmap:'gray';$('cmap').value=activeCmap;
  axes.forEach((axis,i)=>positions[axis]=defaults[axis]??Math.floor((info.shape[i]||1)/2));

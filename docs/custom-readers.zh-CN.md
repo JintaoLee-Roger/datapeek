@@ -53,6 +53,8 @@ def render(path, options):
 
 ## 读取器参数
 
+[如何打开 Settings JSON、选择本地/远端设置](getting-started.zh-CN.md#设置读取器参数)。以下参数按读取器 ID 生效，不是单文件配置。
+
 读取器 ID 可在 **Choose Reader** 中查看：
 
 - `builtin:npy`：NPY 数组。
@@ -82,6 +84,8 @@ def render(path, options):
 | `large_volume_gb` | 默认选择一个/三个切片的体积阈值，默认 1.5 十进制 GB |
 | `max_pixels` | 快速预览每轴显示点上限，默认 512，允许 16–2048 |
 | `max_read_mib` | 二维读取/解码估算和通用 NPZ 解压预算，默认 256 MiB |
+| `preserve_aspect` | 保留原始切片行列比例；默认 `true` |
+| `aspect_ratio` | `preserve_aspect=false` 时的显示宽高比；正数，默认 `2` |
 | `cmap` | 配色名称，通用数组默认 `gray` |
 | `clip_percentile` | 初始自动色阶使用的中央百分位区间，默认 99 |
 | `vmin`、`vmax` | 显式有限色阶，需同时提供且 `vmin < vmax` |

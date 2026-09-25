@@ -75,6 +75,11 @@ def open_array(path, options, renderer_id=None, workspace_root=None, reader_path
         resolved = {'cmap':'gray', **source.options, **options}
         if resolved.get('demean'):
             raise ValueError('Implicit demean is no longer supported. Put preprocessing with a fixed reference in your custom reader, or remove demean to view raw values.')
+        ratio = resolved.get('aspect_ratio', 2)
+        if not isinstance(resolved.get('preserve_aspect', True), bool):
+            raise ValueError('preserve_aspect must be true or false')
+        if isinstance(ratio, bool) or not isinstance(ratio, (int, float)) or not np.isfinite(ratio) or ratio <= 0:
+            raise ValueError('aspect_ratio must be a positive finite width / height ratio')
         time_axis = resolved.get('time_axis', 1)
         dt = resolved.get('dt')
         if isinstance(time_axis,bool) or time_axis not in (0,1):

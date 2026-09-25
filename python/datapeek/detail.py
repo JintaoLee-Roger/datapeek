@@ -46,7 +46,7 @@ class DetailSession:
         except ImportError:
             palettes = {}  # cigvis remains optional for the ordinary 2D viewer.
         return dict(colorscales=palettes, shape=self.shape, dtype=str(self.data.dtype), nbytes=math.prod(self.shape)*np.dtype(self.data.dtype).itemsize, title=self.title, volume=len(self.shape)==3,
-                    defaults={k: v for k, v in self.options.items() if k in (*AXES, 'slices', 'vmin', 'vmax', 'clip_percentile', 'cmap', 'large_volume_gb')})
+                    defaults={k: v for k, v in self.options.items() if k in (*AXES, 'slices', 'vmin', 'vmax', 'clip_percentile', 'cmap', 'large_volume_gb', 'preserve_aspect', 'aspect_ratio')})
 
     def read(self, key):
         read = self.data.read_region if hasattr(self.data, 'read_region') else self.data.__getitem__
@@ -141,7 +141,7 @@ class DetailSession:
         return dict(kind='line' if ndim==1 else 'heatmap', shape=values.shape,
                     data=base64.b64encode(values.tobytes()).decode('ascii'),
                     x0=xlo*xscale, dx=xs*xscale, y0=ylo, dy=ys,
-                    xbounds=[0,(nx-1)*xscale], ybounds=[0,ny-1],
+                    xbounds=[0,(nx-1)*xscale], ybounds=[0,ny-1], displayAspect=nx/ny if ndim!=1 else 2,
                     xlabel=xlabel,ylabel=ylabel,vmin=low,vmax=high,
                     axis=axis_name,index=index, seconds=time.perf_counter()-started,
                     sampled=xs>1 or ys>1, title=self.title)

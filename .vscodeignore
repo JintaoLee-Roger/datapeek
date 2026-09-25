@@ -12,3 +12,6 @@ package-lock.json
 examples/*.npy
 examples/*.csv
 examples/.vscode/**
+build/**
+scripts/**
+media/icon-prompt.txt

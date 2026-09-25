@@ -1,17 +1,25 @@
 # DataPeek
 
+<img src="media/icon.png" alt="DataPeek icon" width="96" height="96">
+
 English | [简体中文](README.zh-CN.md)
 
 A lightweight scientific data preview extension for VS Code. Open a quick overview, inspect a slice when needed, and add Python readers for your own formats.
 
+Author: Jintao Li · [lijintaobt@gmail.com](mailto:lijintaobt@gmail.com)
+
 ## Get started
 
-1. Install the DataPeek `.vsix` using **Extensions: Install from VSIX...**.
-2. Install `numpy` and `matplotlib` in a Python 3.10+ environment. Add `h5py` for HDF5 or `zarr` for Zarr files. Detailed View requires `plotly`; 3D and the Petrel palette require `cigvis` and its viewer dependencies.
+1. In VS Code 1.90+, install the supplied `datapeek-0.0.1.vsix` using **Extensions: Install from VSIX...**.
+2. Install `numpy` and `matplotlib` in a Python 3.10+ environment. Add `h5py` for HDF5 or `zarr` for Zarr files. Detailed View requires `plotly`; 3D and the Petrel palette require `cigvis[viser]`.
 3. Run **DataPeek: Select Python Interpreter**.
 4. Right-click a file or supported data directory and select **Preview with DataPeek**.
 
 With Remote SSH, install Python dependencies and reader scripts on the remote host. Previews open in the active editor group. After updating the extension, run **Developer: Reload Window** and reopen existing previews.
+
+Follow [Installation and first preview](docs/getting-started.md) for copyable dependency commands, a small test dataset, Settings JSON instructions, and troubleshooting. Node.js/npm are not needed to use the extension.
+
+![Quick Preview of synthetic data](docs/images/quick-preview.png)
 
 ## Supported data
 
@@ -37,6 +45,8 @@ Quick Preview shows a static overview. For array readers, **Detailed View** open
 | Full View | Return to the loaded overview |
 | vmin/vmax, Colormap, Apply | Adjust display colors without rereading data |
 | Reset Defaults | Restore the reader's configured display defaults |
+
+Quick Preview and Detailed View fit images within both the available width and height. By default, images preserve the original slice row/column ratio; line plots use 2:1. In Detailed View, uncheck **Original aspect** and set **W/H** to choose a display ratio (e.g. `2` for 2:1). These controls are remembered per view and do not reread data or change color limits. For reader defaults, set `"preserve_aspect": false, "aspect_ratio": 2`; these options also apply to Quick Preview.
 
 Color limits remain fixed after initialization until you change or reset them. Zoom alone does not increase data resolution. Available palettes include `gray`, `seismic`, `RdBu_r`, `viridis`, and `Petrel`.
 

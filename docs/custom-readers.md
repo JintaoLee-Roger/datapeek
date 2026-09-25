@@ -53,6 +53,8 @@ Return a Matplotlib Figure or a Python Plotly Figure. Figure renderers keep thei
 
 ## Reader options
 
+[How to open Settings JSON and choose local/remote settings](getting-started.md#configure-a-reader). These options apply by reader ID, not by individual file.
+
 Reader IDs appear in **Choose Reader**:
 
 - `builtin:npy`: NPY arrays.
@@ -82,6 +84,8 @@ Configuration overrides defaults returned by `Array`. Options belong to each rea
 | `large_volume_gb` | Threshold for the default one/three-slice selection; default 1.5 decimal GB |
 | `max_pixels` | Quick Preview samples per axis; default 512, allowed 16–2048 |
 | `max_read_mib` | Estimated 2D read/decode and generic NPZ decompression budget; default 256 MiB |
+| `preserve_aspect` | Preserve original slice row/column ratio; default `true` |
+| `aspect_ratio` | Display width / height when `preserve_aspect=false`; positive number, default `2` |
 | `cmap` | Colormap name; default `gray` for generic arrays |
 | `clip_percentile` | Central percentile interval for initial automatic limits; default 99 |
 | `vmin`, `vmax` | Explicit finite color limits, with `vmin < vmax`; provide both |

@@ -14,7 +14,7 @@ def encode(data):
 
 def payload(data, options, title, time_axis=1, dt=None):
     import numpy as np
-    result = dict(title=title, shape=list(data.shape), dtype=str(data.dtype), panels=[])
+    result = dict(title=title, shape=list(data.shape), dtype=str(data.dtype), panels=[], preserveAspect=options.get("preserve_aspect", True), aspectRatio=options.get("aspect_ratio", 2))
     if len(data.shape) == 1:
         step = max(1, (data.shape[0] + 19999) // 20000)
         read = data.read_region if hasattr(data, 'read_region') else data.__getitem__
@@ -47,7 +47,10 @@ def payload(data, options, title, time_axis=1, dt=None):
         raw = indices.tobytes()
         packed = zlib.compress(raw, level=1)
         compressed = len(raw) - len(packed) > max(8192, len(raw)*.1)
-        result['panels'].append(dict(label=label, xlabel=xlabel, ylabel=ylabel, width=width, height=height,
+        axes = ('iline', 'xline', 'time')
+        aspect = (data.shape[axes.index(xlabel)] / data.shape[axes.index(ylabel)]
+                  if len(data.shape) == 3 else data.shape[time_axis] / data.shape[1-time_axis])
+        result['panels'].append(dict(aspect=aspect, label=label, xlabel=xlabel, ylabel=ylabel, width=width, height=height,
             rows=values.shape[0], cols=values.shape[1], pixels=encode(packed if compressed else raw), compressed=compressed,
             mask=None if valid.all() else encode(valid.astype(np.uint8).tobytes())))
     return result
